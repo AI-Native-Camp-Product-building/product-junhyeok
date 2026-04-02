@@ -1,0 +1,5 @@
+.blueprint/
+.omc/
+.DS_Store
+node_modules/
+*.bak
