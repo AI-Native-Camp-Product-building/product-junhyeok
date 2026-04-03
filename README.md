@@ -1,6 +1,6 @@
-# ADHD Sprint — Claude Code 학습 웹 플랫폼
+# ADHD Sprint — Claude Code 지속 학습 플랫폼
 
-ADHD 개발자를 위한 도파민 설계 기반 학습 시스템. 짧은 블록 단위로 Claude Code를 체계적으로 마스터하세요.
+ADHD 개발자를 위한 도파민 설계 기반 학습 시스템. Claude Code 생태계의 새 기능, 커뮤니티 워크플로우, 효과적인 유즈케이스를 놓치지 않고 따라갈 수 있도록 돕습니다.
 
 ## 주요 기능
 
@@ -9,6 +9,7 @@ ADHD 개발자를 위한 도파민 설계 기반 학습 시스템. 짧은 블록
 - **게이미피케이션**: 스트릭, 9종 뱃지, 히트맵 캘린더, 축하 애니메이션
 - **간격 반복**: 오래되고 틀린 토픽을 우선 복습
 - **Skip Quiz**: 이미 아는 내용은 배치 테스트로 건너뛰기
+- **일일 콘텐츠 엔진**: 매일 자동으로 Claude Code 생태계를 스캔하고 학습 모듈 생성
 - **오프라인 동작**: localStorage 기반, 백엔드 불필요
 
 ## 시작하기
@@ -40,42 +41,92 @@ npm run lint     # ESLint
 
 ## 커리큘럼
 
-Day 1 — 7개 블록:
+**Day 1** — Claude Code 기초 (7개 블록):
+Agentic Loop, CLAUDE.md, Tool Use, Context Window, Slash Commands, Permissions & Safety, Hooks
 
-1. Agentic Loop
-2. CLAUDE.md
-3. Tool Use
-4. Context Window
-5. Slash Commands
-6. Permissions & Safety
-7. Hooks
+**Day 2–4** — 준비 중 (MCP 딥다이브, Clarify + PRD, 세션 최적화)
 
-Days 2–4는 준비 중입니다.
+**Day 5+** — daily-digest 파이프라인이 자동 생성하는 신규 모듈
+
+## 콘텐츠 파이프라인
+
+매일 자동으로 Claude Code 생태계를 스캔하고, 교육적 가치가 있는 발견이 있으면 학습 모듈을 생성합니다.
+
+```
+⏰ Cron (매일 9:07)
+   ↓
+🔍 ecosystem-scout → 증분 스캔 (공식 채널 + 커뮤니티)
+   ↓
+📋 트리아지 → PROCEED / SKIP 판정
+   ↓ (PROCEED)
+✏️  lesson-designer → ADHD 친화 3-Phase 블록 설계
+   ↓
+🔨 module-builder → Next.js 앱 통합 (data/staging/)
+   ↓
+✅ module-qa → 타입/빌드/콘텐츠/디자인 검증
+   ↓
+👀 사람 리뷰 → 퍼블리시
+```
+
+### 사용법
+
+```bash
+# 수동: 특정 주제 모듈 생성
+"Claude Code hooks 학습 모듈 만들어줘"
+
+# 수동: 즉시 스캔
+"오늘 Claude Code에 뭐 새로운 거 있어?"
+
+# 자동: cron이 매일 실행 → staging → 리뷰 후 퍼블리시
+"스테이징 퍼블리시해줘"
+```
+
+### 개발:학습 비중
+
+모든 모듈이 코딩만은 아닙니다. 콘텐츠 유형별로 비중을 자동 조절합니다:
+
+| 유형 | 예시 | 개발:학습 |
+|------|------|----------|
+| 기능학습 | 새 API, 설정 | 7:3 |
+| 워크플로우 | 작업 패턴, 자동화 | 5:5 |
+| 개념이해 | 아키텍처, 원리 | 3:7 |
 
 ## 프로젝트 구조
 
 ```
-app/
-├── page.tsx                          # 홈 (대시보드)
-├── onboarding/
-│   ├── page.tsx                      # Day 목록
-│   ├── [dayId]/page.tsx              # 블록 목록
-│   ├── [dayId]/[blockId]/page.tsx    # 학습 (3-Phase)
-│   ├── skip-quiz/page.tsx            # 배치 테스트
-│   └── complete/page.tsx             # 완료 화면
+app/                                   # Next.js App Router
+├── page.tsx                           # 랜딩 페이지
+├── onboarding/                        # 온보딩 라우트
+│   ├── [dayId]/[blockId]/page.tsx     # 학습 (3-Phase 상태머신)
+│   ├── skip-quiz/page.tsx             # 배치 테스트
+│   └── complete/page.tsx              # 완료 화면
 components/
-├── ui/                               # 공통 UI (Card, Badge, Timer 등)
-├── onboarding/                       # 학습 컴포넌트
-│   └── execute/                      # 5가지 실습 타입
-├── gamification/                     # 스트릭, 뱃지, 히트맵
-└── feedback/                         # 피드백 (ThumbsReaction)
-lib/
-├── types.ts                          # 중앙 타입 정의
-├── state.ts / state-context.tsx      # 상태 관리 (localStorage + Context)
-├── curriculum-loader.ts              # 콘텐츠 로더
-├── streak.ts / badges.ts            # 게이미피케이션 로직
-└── spaced-repetition.ts             # 간격 반복 알고리즘
-data/onboarding/                      # Day별 콘텐츠
+├── ui/                                # 공통 UI (Card, ProgressBar, CodeBlock)
+├── onboarding/execute/                # 5가지 실습 타입 컴포넌트
+├── gamification/                      # 스트릭, 뱃지, 히트맵
+└── landing/                           # 랜딩 페이지 섹션 (11개)
+lib/                                   # 비즈니스 로직
+├── types.ts                           # 중앙 타입 정의
+├── state.ts / state-context.tsx       # 상태 관리 (localStorage + Context)
+├── curriculum-loader.ts               # 콘텐츠 로더
+└── streak.ts / badges.ts / spaced-repetition.ts
+data/
+├── onboarding/                        # Day별 학습 콘텐츠
+├── staging/                           # 자동 생성 콘텐츠 리뷰 대기
+└── content-registry.md                # 토픽 추적 + 중복 방지
+.claude/
+├── agents/                            # 에이전트 정의 (4개)
+│   ├── ecosystem-scout.md             # 생태계 리서처
+│   ├── lesson-designer.md             # 교육 설계자
+│   ├── module-builder.md              # 앱 통합 개발자
+│   └── module-qa.md                   # 품질 검증 전문가
+└── skills/                            # 스킬 정의 (6개)
+    ├── daily-digest/                  # 일일 자동 콘텐츠 엔진
+    ├── sprint-pipeline/               # 모듈 생성 파이프라인
+    ├── ecosystem-scan/                # 생태계 조사 프로토콜
+    ├── lesson-design/                 # 블록 설계 프레임워크
+    ├── module-build/                  # 앱 통합 가이드
+    └── module-qa/                     # 검증 프로토콜
 ```
 
 ## ADHD 설계 원칙
