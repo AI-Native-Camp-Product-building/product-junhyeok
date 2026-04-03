@@ -50,13 +50,35 @@ npm run lint     # ESLint
 
 ## Design Tokens
 
-Tailwind 커스텀 컬러 (`globals.css` + `tailwind.config.ts`):
-- `dopamine` (purple/amber 스케일) — 주요 브랜드
+Tailwind 커스텀 컬러 (`globals.css` `@theme inline` + `tailwind.config.ts` 병행):
+
+### 브랜드 컬러
+- `dopamine` (purple 스케일) — 주요 브랜드
 - `spark` (orange) — 보조 액센트
 - `streak` (green) — 스트릭/성공
 - `surface` (dark slate) — 배경/카드
 
-폰트: `font-sans` = Noto Sans KR, `font-mono` = JetBrains Mono. 다크 테마 기본 (`#020617`).
+### 시맨틱 컬러
+- `reward` (amber) — 부분 성공, 경고 상태, 약점 토픽 하이라이트
+- `error` (red) — 오답, 에러 상태
+- `code` (blue) — 코드 구문 키워드, 기술 지표
+
+### 장식 컬러 (랜딩 페이지)
+- `accent-teal` (teal) — 페이즈/토픽 액센트
+- `accent-pink` (pink) — 페이즈 액센트
+- `accent-purple` (purple) — 기능/대시보드 액센트
+- `terminal-red/yellow/green` — macOS 터미널 트래픽 라이트
+
+폰트: `font-sans` = Noto Sans KR, `font-mono` = JetBrains Mono. 다크 테마 기본 (`bg-surface-950`).
+
+### 디자인 규칙 (MUST follow)
+- NEVER use raw Tailwind colors (red-*, blue-*, amber-*, green-*, teal-*, pink-*, purple-*, yellow-*). 반드시 디자인 토큰 사용.
+- NEVER use HEX literals in className or style attributes. CSS 변수 또는 토큰 클래스 사용.
+- NEVER use `<style>` blocks in components. 모든 keyframe과 유틸리티 클래스는 `globals.css`에 정의.
+- NEVER reimplement ProgressBar inline. `components/ui/ProgressBar`의 `<ProgressBar>` 사용. (`size="sm"` = h-1.5, `trackColor="surface-900"` 지원)
+- NEVER reimplement Card styles inline. `components/ui/Card`의 `<Card>` 사용.
+- `bg-surface-950`이 canonical dark background. `bg-[#020617]` 사용 금지.
+- `white/XX` 투명도 유틸리티 (text-white/50, bg-white/5 등)는 토큰 요구에서 면제.
 
 ## Legacy Plugin Files
 
