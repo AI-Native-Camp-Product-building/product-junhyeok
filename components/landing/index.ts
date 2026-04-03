@@ -1,0 +1,11 @@
+export { Navigation } from "./Navigation";
+export { HeroSection } from "./HeroSection";
+export { ProblemSection } from "./ProblemSection";
+export { HowItWorksSection } from "./HowItWorksSection";
+export { FeaturesSection } from "./FeaturesSection";
+export { CurriculumSection } from "./CurriculumSection";
+export { ScienceSection } from "./ScienceSection";
+export { AdhdPrinciplesSection } from "./AdhdPrinciplesSection";
+export { HowToStartSection } from "./HowToStartSection";
+export { CtaSection } from "./CtaSection";
+export { Footer } from "./Footer";
