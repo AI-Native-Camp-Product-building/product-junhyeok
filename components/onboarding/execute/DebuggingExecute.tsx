@@ -101,7 +101,7 @@ export default function DebuggingExecute({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              isCorrect ? "text-streak-400" : "text-amber-400"
+              isCorrect ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {isCorrect ? "정답입니다!" : "다시 생각해보세요"}

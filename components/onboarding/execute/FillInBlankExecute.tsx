@@ -93,7 +93,7 @@ export default function FillInBlankExecute({
                     isCorrectAnswer
                       ? "border-streak-400 bg-streak-400/10 text-streak-400"
                       : isWrongAnswer
-                        ? "border-red-500 bg-red-500/10 text-red-400"
+                        ? "border-error-500 bg-error-500/10 text-error-400"
                         : "border-dopamine-400 bg-surface-800 text-surface-200"
                   }`}
                 >
@@ -126,7 +126,7 @@ export default function FillInBlankExecute({
                 className={`text-sm px-3 py-1 rounded ${
                   selections[blank.position] === blank.correct
                     ? "text-streak-400"
-                    : "text-amber-400"
+                    : "text-reward-400"
                 }`}
               >
                 빈칸 {i + 1}: <span className="font-mono">{blank.correct}</span>
@@ -151,7 +151,7 @@ export default function FillInBlankExecute({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              score === 1 ? "text-streak-400" : "text-amber-400"
+              score === 1 ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {score === 1

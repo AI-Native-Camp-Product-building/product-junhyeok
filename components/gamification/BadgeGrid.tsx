@@ -76,30 +76,6 @@ export default function BadgeGrid({
         })}
       </div>
 
-      <style>{`
-        @keyframes badgeShine {
-          0% {
-            background-position: -200% center;
-          }
-          100% {
-            background-position: 200% center;
-          }
-        }
-        .badge-shine::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          border-radius: inherit;
-          background: linear-gradient(
-            105deg,
-            transparent 40%,
-            rgba(232, 121, 249, 0.18) 50%,
-            transparent 60%
-          );
-          background-size: 200% 100%;
-          animation: badgeShine 3s linear infinite;
-        }
-      `}</style>
     </div>
   );
 }

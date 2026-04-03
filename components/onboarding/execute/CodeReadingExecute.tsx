@@ -51,7 +51,7 @@ export default function CodeReadingExecute({
             if (option === content.answer) {
               style = "border-streak-400 bg-streak-400/10 text-streak-400";
             } else if (option === selected) {
-              style = "border-red-500 bg-red-500/10 text-red-400";
+              style = "border-error-500 bg-error-500/10 text-error-400";
             } else {
               style = "border-surface-700 bg-surface-800 opacity-50";
             }
@@ -76,7 +76,7 @@ export default function CodeReadingExecute({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              isCorrect ? "text-streak-400" : "text-amber-400"
+              isCorrect ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {isCorrect ? "정답입니다!" : "다시 생각해보세요"}

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAppState } from "@/lib/state-context";
 import { getDays } from "@/lib/curriculum-loader";
 import { calculateStreak } from "@/lib/streak";
+import { ProgressBar } from "@/components/ui";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -117,12 +118,7 @@ export default function OnboardingPage() {
                       <span>진행률</span>
                       <span>{progress}%</span>
                     </div>
-                    <div className="w-full h-1.5 rounded-full bg-surface-800 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-dopamine-400 transition-all duration-500"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
+                    <ProgressBar value={progress} color="dopamine" size="sm" className="mt-1" />
                   </div>
                 ) : (
                   <span className="text-xs text-surface-500">준비 중</span>

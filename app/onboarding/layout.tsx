@@ -72,9 +72,9 @@ export default function OnboardingLayout({
   const overallProgress = computeOverallProgress(state.onboarding.days);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-surface-100">
+    <div className="min-h-screen bg-surface-950 text-surface-100">
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-surface-800 bg-[#020617]/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-surface-800 bg-surface-950/95 backdrop-blur-sm">
         <div className="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between gap-4">
           {/* Left: back + breadcrumb */}
           <div className="flex items-center gap-3 min-w-0">

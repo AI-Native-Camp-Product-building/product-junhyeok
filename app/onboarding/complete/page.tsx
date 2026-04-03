@@ -149,18 +149,18 @@ export default function OnboardingCompletePage() {
 
           {weakTopics.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-amber-400">
+              <h3 className="text-sm font-semibold text-reward-400">
                 약점 토픽
               </h3>
               <div className="flex flex-wrap gap-2">
                 {weakTopics.map((t) => (
                   <span
                     key={t.topicId}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/25 text-amber-400 text-xs font-medium"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-reward-500/15 border border-reward-400/25 text-reward-400 text-xs font-medium"
                   >
                     {t.topicId}
-                    <span className="text-amber-400/60">{t.percentage}%</span>
-                    <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded-full">
+                    <span className="text-reward-400/60">{t.percentage}%</span>
+                    <span className="text-[10px] bg-reward-500/20 px-1.5 py-0.5 rounded-full">
                       복습 추천
                     </span>
                   </span>
@@ -188,7 +188,7 @@ export default function OnboardingCompletePage() {
         {weakTopics.length > 0 && (
           <Link
             href="/onboarding"
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-spark-500 text-white font-semibold text-sm shadow-lg shadow-amber-600/20 hover:shadow-amber-600/35 hover:scale-[1.02] transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-reward-500 to-spark-500 text-white font-semibold text-sm shadow-lg shadow-reward-600/20 hover:shadow-reward-600/35 hover:scale-[1.02] transition-all duration-300"
           >
             약점 토픽 복습하기
             <svg

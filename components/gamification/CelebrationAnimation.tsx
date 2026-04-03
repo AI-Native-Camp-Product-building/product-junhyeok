@@ -10,13 +10,13 @@ interface CelebrationAnimationProps {
 }
 
 const CONFETTI_COLORS = [
-  "#e879f9", // dopamine-400
-  "#d946ef", // dopamine-500
-  "#f0abfc", // dopamine-300
-  "#fb923c", // spark-400
-  "#f97316", // spark-500
-  "#4ade80", // streak-400
-  "#22c55e", // streak-500
+  "var(--color-dopamine-400)",
+  "var(--color-dopamine-500)",
+  "var(--color-dopamine-300)",
+  "var(--color-spark-400)",
+  "var(--color-spark-500)",
+  "var(--color-streak-400)",
+  "var(--color-streak-500)",
 ];
 
 const BADGE_EMOJI = "🏅";
@@ -134,96 +134,7 @@ export default function CelebrationAnimation({
         </>
       )}
 
-      <style>{`
-        @keyframes confettiFall {
-          0% {
-            transform: translateY(-20px) rotate(0deg);
-            opacity: 1;
-          }
-          80% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) rotate(var(--rot, 360deg));
-            opacity: 0;
-          }
-        }
-        .confetti-particle {
-          animation: confettiFall linear forwards;
-        }
 
-        @keyframes badgeBurst {
-          0% {
-            transform: scale(0.2) rotate(-20deg);
-            opacity: 0;
-          }
-          40% {
-            transform: scale(1.3) rotate(8deg);
-            opacity: 1;
-          }
-          60% {
-            transform: scale(0.95) rotate(-4deg);
-          }
-          80% {
-            transform: scale(1.08) rotate(2deg);
-          }
-          90% {
-            transform: scale(1) rotate(0deg);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1) rotate(0deg);
-            opacity: 0;
-          }
-        }
-        .badge-burst {
-          animation: badgeBurst 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          filter: drop-shadow(0 0 24px #e879f9) drop-shadow(0 0 48px #d946ef88);
-        }
-
-        @keyframes fireFall {
-          0% {
-            transform: translateY(-30px) scale(1);
-            opacity: 1;
-          }
-          70% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(100vh) scale(0.6);
-            opacity: 0;
-          }
-        }
-        .fire-particle {
-          animation: fireFall linear forwards;
-        }
-
-        @keyframes streakPop {
-          0% {
-            transform: scale(0.5);
-            opacity: 0;
-          }
-          30% {
-            transform: scale(1.4);
-            opacity: 1;
-          }
-          60% {
-            transform: scale(0.9);
-          }
-          80% {
-            transform: scale(1.1);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1);
-            opacity: 0;
-          }
-        }
-        .streak-counter-anim {
-          animation: streakPop 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          filter: drop-shadow(0 0 20px #4ade80) drop-shadow(0 0 40px #22c55e88);
-        }
-      `}</style>
     </div>
   );
 

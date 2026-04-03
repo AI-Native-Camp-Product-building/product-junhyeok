@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSkipQuizQuestions } from "@/lib/curriculum-loader";
 import { useAppState } from "@/lib/state-context";
 import type { QuizQuestion } from "@/lib/types";
+import { ProgressBar } from "@/components/ui";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -191,12 +192,7 @@ export default function SkipQuizPage() {
             </span>
             <span>{Math.round(((currentIdx + 1) / total) * 100)}%</span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-surface-900">
-            <div
-              className="h-full rounded-full bg-dopamine-500 transition-all duration-500"
-              style={{ width: `${((currentIdx + 1) / total) * 100}%` }}
-            />
-          </div>
+          <ProgressBar value={((currentIdx + 1) / total) * 100} color="dopamine" trackColor="surface-900" />
         </div>
 
         {/* Question card */}
@@ -219,8 +215,8 @@ export default function SkipQuizPage() {
                   borderColor = "border-streak-500";
                   bgColor = "bg-streak-500/10";
                 } else if (isSelected && !isThisCorrect) {
-                  borderColor = "border-red-500";
-                  bgColor = "bg-red-500/10";
+                  borderColor = "border-error-500";
+                  bgColor = "bg-error-500/10";
                 } else {
                   borderColor = "border-surface-800";
                   bgColor = "bg-surface-900 opacity-50";
@@ -247,7 +243,7 @@ export default function SkipQuizPage() {
             <div className="mt-6 flex items-center justify-between">
               <span
                 className={`text-sm font-medium ${
-                  isCorrect ? "text-streak-400" : "text-red-400"
+                  isCorrect ? "text-streak-400" : "text-error-400"
                 }`}
               >
                 {isCorrect ? "정답입니다!" : "오답입니다"}
@@ -315,7 +311,7 @@ export default function SkipQuizPage() {
                 {wrongTopics.map((topic) => (
                   <li
                     key={topic}
-                    className="flex items-start gap-2 text-sm text-red-400"
+                    className="flex items-start gap-2 text-sm text-error-400"
                   >
                     <span className="mt-0.5 shrink-0">&#10005;</span>
                     <span className="text-surface-200">{topic}</span>

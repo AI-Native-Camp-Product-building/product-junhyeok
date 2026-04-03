@@ -178,9 +178,9 @@ export default function HomePage() {
             <div className="relative animate-float">
               <div className="terminal-window glow-purple">
                 <div className="terminal-header">
-                  <div className="terminal-dot bg-red-500/80" />
-                  <div className="terminal-dot bg-yellow-500/80" />
-                  <div className="terminal-dot bg-green-500/80" />
+                  <div className="terminal-dot bg-terminal-red" />
+                  <div className="terminal-dot bg-terminal-yellow" />
+                  <div className="terminal-dot bg-terminal-green" />
                   <span className="ml-2 text-xs text-white/30 font-mono">
                     claude — sprint
                   </span>
@@ -206,8 +206,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-1.5 h-2 bg-white/5 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-dopamine-500 to-spark-500 rounded-full animate-progress-fill"
-                        style={{ width: "43%" }}
+                        className="h-full bg-gradient-to-r from-dopamine-500 to-spark-500 rounded-full animate-progress-fill w-[43%]"
                       />
                     </div>
                     <div className="flex justify-between text-[10px] text-white/20 mt-1">
@@ -244,7 +243,7 @@ export default function HomePage() {
         <div className="section-divider" />
         <div className="max-w-4xl mx-auto px-6 pt-20 md:pt-28">
           <div className="reveal text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight" style={{ lineHeight: "2.5em" }}>
+            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-[2.5em]">
               &ldquo;공부해야 하는 건 아는데,
               <br />
               <span className="text-white/40">시작이 안 돼요.&rdquo;</span>
@@ -380,8 +379,8 @@ export default function HomePage() {
 
             {/* Phase 2 */}
             <div className="bezel-card p-5 flex items-start gap-5 card-hover group">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600/30 to-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-                <span className="text-blue-400 font-mono font-bold text-sm">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-code-600/30 to-code-500/10 border border-code-500/20 flex items-center justify-center">
+                <span className="text-code-400 font-mono font-bold text-sm">
                   02
                 </span>
               </div>
@@ -429,8 +428,8 @@ export default function HomePage() {
 
             {/* Phase 4 */}
             <div className="bezel-card p-5 flex items-start gap-5 card-hover group">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-red-600/30 to-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <span className="text-red-400 font-mono font-bold text-sm">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-error-600/30 to-error-500/10 border border-error-500/20 flex items-center justify-center">
+                <span className="text-error-400 font-mono font-bold text-sm">
                   04
                 </span>
               </div>
@@ -454,8 +453,8 @@ export default function HomePage() {
 
             {/* Phase 5 */}
             <div className="bezel-card p-5 flex items-start gap-5 card-hover group">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-teal-600/30 to-teal-500/10 border border-teal-500/20 flex items-center justify-center">
-                <span className="text-teal-400 font-mono font-bold text-sm">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-accent-teal-600/30 to-accent-teal-500/10 border border-accent-teal-500/20 flex items-center justify-center">
+                <span className="text-accent-teal-400 font-mono font-bold text-sm">
                   05
                 </span>
               </div>
@@ -478,8 +477,8 @@ export default function HomePage() {
 
             {/* Phase 6 */}
             <div className="bezel-card p-5 flex items-start gap-5 card-hover group">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-pink-600/30 to-pink-500/10 border border-pink-500/20 flex items-center justify-center">
-                <span className="text-pink-400 font-mono font-bold text-sm">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-accent-pink-600/30 to-accent-pink-500/10 border border-accent-pink-500/20 flex items-center justify-center">
+                <span className="text-accent-pink-400 font-mono font-bold text-sm">
                   06
                 </span>
               </div>
@@ -637,9 +636,9 @@ export default function HomePage() {
 
             {/* Feature 3: Quiz */}
             <div className="bezel-card p-6 space-y-4 card-hover">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600/20 to-blue-500/10 border border-blue-500/15 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-code-600/20 to-code-500/10 border border-code-500/15 flex items-center justify-center">
                 <svg
-                  className="w-5 h-5 text-blue-400"
+                  className="w-5 h-5 text-code-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -659,7 +658,7 @@ export default function HomePage() {
                   복습.
                 </p>
               </div>
-              <div className="font-mono text-[11px] text-blue-400/60 bg-blue-600/5 px-3 py-2 rounded-lg">
+              <div className="font-mono text-[11px] text-code-400/60 bg-code-600/5 px-3 py-2 rounded-lg">
                 /quiz all
               </div>
             </div>
@@ -683,9 +682,9 @@ export default function HomePage() {
 
             {/* Feature 5: Dashboard */}
             <div className="bezel-card p-6 space-y-4 card-hover">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-purple-600/20 to-purple-500/10 border border-purple-500/15 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent-purple-600/20 to-accent-purple-500/10 border border-accent-purple-500/15 flex items-center justify-center">
                 <svg
-                  className="w-5 h-5 text-purple-400"
+                  className="w-5 h-5 text-accent-purple-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -706,16 +705,16 @@ export default function HomePage() {
                   전체 진행률 + 히트맵 + 퀴즈 분석. 나의 학습 여정을 한눈에.
                 </p>
               </div>
-              <div className="font-mono text-[11px] text-purple-400/60 bg-purple-600/5 px-3 py-2 rounded-lg">
+              <div className="font-mono text-[11px] text-accent-purple-400/60 bg-accent-purple-600/5 px-3 py-2 rounded-lg">
                 /dashboard
               </div>
             </div>
 
             {/* Feature 6: Living Curriculum */}
             <div className="bezel-card p-6 space-y-4 card-hover">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-teal-600/20 to-teal-500/10 border border-teal-500/15 flex items-center justify-center">
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-accent-teal-600/20 to-accent-teal-500/10 border border-accent-teal-500/15 flex items-center justify-center">
                 <svg
-                  className="w-5 h-5 text-teal-400"
+                  className="w-5 h-5 text-accent-teal-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -737,7 +736,7 @@ export default function HomePage() {
                   토픽에 추가.
                 </p>
               </div>
-              <div className="font-mono text-[11px] text-teal-400/60 bg-teal-600/5 px-3 py-2 rounded-lg">
+              <div className="font-mono text-[11px] text-accent-teal-400/60 bg-accent-teal-600/5 px-3 py-2 rounded-lg">
                 /sprint update
               </div>
             </div>
@@ -821,7 +820,7 @@ export default function HomePage() {
             </div>
             {/* Topic 5 */}
             <div className="bezel-card p-4 flex items-center gap-4 card-hover group">
-              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-blue-600/15 border border-blue-500/15 flex items-center justify-center text-blue-400 text-xs font-bold">
+              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-code-600/15 border border-code-500/15 flex items-center justify-center text-code-400 text-xs font-bold">
                 05
               </div>
               <div className="flex-1 min-w-0">
@@ -835,7 +834,7 @@ export default function HomePage() {
             </div>
             {/* Topic 6 */}
             <div className="bezel-card p-4 flex items-center gap-4 card-hover group">
-              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-blue-600/15 border border-blue-500/15 flex items-center justify-center text-blue-400 text-xs font-bold">
+              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-code-600/15 border border-code-500/15 flex items-center justify-center text-code-400 text-xs font-bold">
                 06
               </div>
               <div className="flex-1 min-w-0">
@@ -849,7 +848,7 @@ export default function HomePage() {
             </div>
             {/* Topic 7 */}
             <div className="bezel-card p-4 flex items-center gap-4 card-hover group">
-              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-teal-600/15 border border-teal-500/15 flex items-center justify-center text-teal-400 text-xs font-bold">
+              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-accent-teal-600/15 border border-accent-teal-500/15 flex items-center justify-center text-accent-teal-400 text-xs font-bold">
                 07
               </div>
               <div className="flex-1 min-w-0">
@@ -863,7 +862,7 @@ export default function HomePage() {
             </div>
             {/* Topic 8 */}
             <div className="bezel-card p-4 flex items-center gap-4 card-hover group">
-              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-teal-600/15 border border-teal-500/15 flex items-center justify-center text-teal-400 text-xs font-bold">
+              <div className="topic-num flex-shrink-0 w-9 h-9 rounded-lg bg-accent-teal-600/15 border border-accent-teal-500/15 flex items-center justify-center text-accent-teal-400 text-xs font-bold">
                 08
               </div>
               <div className="flex-1 min-w-0">
@@ -920,7 +919,7 @@ export default function HomePage() {
         <div className="section-divider" />
         <div className="max-w-6xl mx-auto px-6 pt-20 md:pt-28">
           <div className="reveal text-center space-y-4 mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-medium">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-code-500/10 border border-code-500/20 text-code-400 text-xs font-medium">
               Research-Backed
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
@@ -974,7 +973,7 @@ export default function HomePage() {
             {/* Flow State */}
             <div className="bezel-card p-6 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600/20 to-blue-500/5 border border-blue-500/15 flex items-center justify-center text-lg">{"\uD83C\uDF0A"}</div>
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-code-600/20 to-code-500/5 border border-code-500/15 flex items-center justify-center text-lg">{"\uD83C\uDF0A"}</div>
                 <div className="text-sm font-semibold text-white/90">몰입 상태 (Flow State)</div>
               </div>
               <p className="text-xs text-white/45 leading-relaxed">
@@ -1055,7 +1054,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="text-center space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-blue-500/5 border border-blue-500/15 mx-auto flex items-center justify-center text-2xl">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-code-600/20 to-code-500/5 border border-code-500/15 mx-auto flex items-center justify-center text-2xl">
                 {"\uD83D\uDD04"}
               </div>
               <div className="text-sm font-semibold text-white/80">
@@ -1207,98 +1206,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* Landing page specific styles */}
-      <style>{`
-        .terminal-window {
-          background: #0c0e14;
-          border: 1px solid rgba(168, 85, 247, 0.2);
-          border-radius: 12px;
-          overflow: hidden;
-        }
-        .terminal-header {
-          background: rgba(168, 85, 247, 0.06);
-          border-bottom: 1px solid rgba(168, 85, 247, 0.1);
-          padding: 12px 16px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .terminal-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-        }
-        .code-block {
-          font-family: 'JetBrains Mono', monospace;
-          font-size: 0.85rem;
-          line-height: 1.6;
-        }
-        .phase-connector {
-          position: relative;
-        }
-        .phase-connector::after {
-          content: '';
-          position: absolute;
-          right: -24px;
-          top: 50%;
-          width: 24px;
-          height: 2px;
-          background: linear-gradient(90deg, rgba(168, 85, 247, 0.4), rgba(168, 85, 247, 0.1));
-        }
-        .phase-connector:last-child::after {
-          display: none;
-        }
-        @keyframes flicker {
-          0%, 100% { transform: scaleY(1) scaleX(1); }
-          25% { transform: scaleY(1.05) scaleX(0.97); }
-          50% { transform: scaleY(0.95) scaleX(1.03); }
-          75% { transform: scaleY(1.02) scaleX(0.98); }
-        }
-        .fire-flicker {
-          animation: flicker 0.8s ease-in-out infinite;
-        }
-        .reveal {
-          opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .reveal.visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .bezel-card {
-          background: linear-gradient(145deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
-          border: 1px solid rgba(148, 163, 184, 0.08);
-          backdrop-filter: blur(20px);
-          border-radius: 16px;
-        }
-        .bezel-card-inner {
-          background: linear-gradient(145deg, rgba(15, 23, 42, 0.5), rgba(2, 6, 23, 0.7));
-          border: 1px solid rgba(148, 163, 184, 0.04);
-          border-radius: 12px;
-        }
-        .topic-num {
-          font-family: 'JetBrains Mono', monospace;
-          font-variant-numeric: tabular-nums;
-        }
-        .section-divider {
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), transparent);
-        }
-        @keyframes scrollDown {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(8px); }
-          60% { transform: translateY(4px); }
-        }
-        .pulse-ring::before {
-          content: '';
-          position: absolute;
-          inset: -4px;
-          border-radius: inherit;
-          border: 2px solid currentColor;
-          animation: pulseRing 2s ease-out infinite;
-        }
-      `}</style>
     </>
   );
 }

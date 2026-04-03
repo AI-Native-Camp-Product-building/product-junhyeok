@@ -34,24 +34,6 @@ export default function StreakCounter({
         최장 기록: <span className="font-semibold text-surface-200">{longest}일</span>
       </p>
 
-      <style>{`
-        @keyframes streakPulse {
-          0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.85;
-            transform: scale(1.04);
-          }
-        }
-        .animate-streak-pulse {
-          animation: streakPulse 2s ease-in-out infinite;
-        }
-        .streak-glow {
-          filter: drop-shadow(0 0 12px #4ade80) drop-shadow(0 0 24px #22c55e88);
-        }
-      `}</style>
     </div>
   );
 }

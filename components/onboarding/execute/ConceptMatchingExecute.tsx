@@ -89,7 +89,7 @@ export default function ConceptMatchingExecute({
                     ? submitted
                       ? matches[idx] === content.pairs[idx].right
                         ? "border-streak-400 bg-streak-400/10"
-                        : "border-red-500 bg-red-500/10"
+                        : "border-error-500 bg-error-500/10"
                       : "border-dopamine-500/50 bg-surface-800"
                     : "border-surface-700 bg-surface-800 hover:border-surface-500"
               }`}
@@ -144,7 +144,7 @@ export default function ConceptMatchingExecute({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              score === 1 ? "text-streak-400" : "text-amber-400"
+              score === 1 ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {score === 1

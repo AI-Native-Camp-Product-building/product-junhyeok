@@ -128,7 +128,7 @@ export default function QuizQuestion({
               <div
                 key={i}
                 className={`w-3 h-3 rounded-full ${
-                  i < correctCount ? "bg-streak-400" : "bg-red-500"
+                  i < correctCount ? "bg-streak-400" : "bg-error-500"
                 }`}
               />
             ))}
@@ -209,7 +209,7 @@ export default function QuizQuestion({
             if (option === current.answer) {
               style = "border-streak-400 bg-streak-400/10";
             } else if (option === selected) {
-              style = "border-red-500 bg-red-500/10";
+              style = "border-error-500 bg-error-500/10";
             } else {
               style = "border-surface-700 bg-surface-800 opacity-50";
             }
@@ -235,7 +235,7 @@ export default function QuizQuestion({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              isCorrect ? "text-streak-400" : "text-amber-400"
+              isCorrect ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {isCorrect ? "정답!" : `오답 - 정답: ${current.answer}`}

@@ -65,7 +65,7 @@ export default function SequenceOrderingExecute({
             if (item === content.items[idx]) {
               itemStyle = "border-streak-400 bg-streak-400/10";
             } else {
-              itemStyle = "border-red-500 bg-red-500/10";
+              itemStyle = "border-error-500 bg-error-500/10";
             }
           }
 
@@ -155,7 +155,7 @@ export default function SequenceOrderingExecute({
         <div className="space-y-4">
           <p
             className={`text-sm font-semibold ${
-              score === 1 ? "text-streak-400" : "text-amber-400"
+              score === 1 ? "text-streak-400" : "text-reward-400"
             }`}
           >
             {score === 1
