@@ -47,6 +47,41 @@ const config: Config = {
           900: "#0f172a",
           950: "#020617",
         },
+        reward: {
+          400: "#fbbf24",
+          500: "#f59e0b",
+          600: "#d97706",
+        },
+        error: {
+          400: "#f87171",
+          500: "#ef4444",
+          600: "#dc2626",
+        },
+        code: {
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#2563eb",
+        },
+        "accent-teal": {
+          400: "#2dd4bf",
+          500: "#14b8a6",
+          600: "#0d9488",
+        },
+        "accent-pink": {
+          400: "#f472b6",
+          500: "#ec4899",
+          600: "#db2777",
+        },
+        "accent-purple": {
+          400: "#c084fc",
+          500: "#a855f7",
+          600: "#9333ea",
+        },
+        terminal: {
+          red: "rgb(239 68 68 / 0.8)",
+          yellow: "rgb(234 179 8 / 0.8)",
+          green: "rgb(34 197 94 / 0.8)",
+        },
       },
       keyframes: {
         float: {
@@ -60,6 +95,50 @@ const config: Config = {
         progressFill: {
           from: { width: "0" },
         },
+        confettiFall: {
+          "0%": { transform: "translateY(-20px) rotate(0deg)", opacity: "1" },
+          "80%": { opacity: "1" },
+          "100%": { transform: "translateY(100vh) rotate(var(--rot, 360deg))", opacity: "0" },
+        },
+        badgeBurst: {
+          "0%": { transform: "scale(0.2) rotate(-20deg)", opacity: "0" },
+          "40%": { transform: "scale(1.3) rotate(8deg)", opacity: "1" },
+          "60%": { transform: "scale(0.95) rotate(-4deg)" },
+          "80%": { transform: "scale(1.08) rotate(2deg)" },
+          "90%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "0" },
+        },
+        fireFall: {
+          "0%": { transform: "translateY(-30px) scale(1)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": { transform: "translateY(100vh) scale(0.6)", opacity: "0" },
+        },
+        streakPop: {
+          "0%": { transform: "scale(0.5)", opacity: "0" },
+          "30%": { transform: "scale(1.4)", opacity: "1" },
+          "60%": { transform: "scale(0.9)" },
+          "80%": { transform: "scale(1.1)", opacity: "1" },
+          "100%": { transform: "scale(1)", opacity: "0" },
+        },
+        streakPulse: {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.85", transform: "scale(1.04)" },
+        },
+        badgeShine: {
+          "0%": { backgroundPosition: "-200% center" },
+          "100%": { backgroundPosition: "200% center" },
+        },
+        flicker: {
+          "0%, 100%": { transform: "scaleY(1) scaleX(1)" },
+          "25%": { transform: "scaleY(1.05) scaleX(0.97)" },
+          "50%": { transform: "scaleY(0.95) scaleX(1.03)" },
+          "75%": { transform: "scaleY(1.02) scaleX(0.98)" },
+        },
+        scrollDown: {
+          "0%, 20%, 50%, 80%, 100%": { transform: "translateY(0)" },
+          "40%": { transform: "translateY(8px)" },
+          "60%": { transform: "translateY(4px)" },
+        },
       },
       animation: {
         float: "float 6s ease-in-out infinite",
@@ -67,6 +146,14 @@ const config: Config = {
         "float-fast": "float 4s ease-in-out infinite 0.5s",
         "pulse-ring": "pulseRing 2s ease-out infinite",
         "progress-fill": "progressFill 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "confetti-fall": "confettiFall 2s linear forwards",
+        "badge-burst": "badgeBurst 3s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "fire-fall": "fireFall 2s linear forwards",
+        "streak-pop": "streakPop 3s cubic-bezier(0.22, 1, 0.36, 1) forwards",
+        "streak-pulse": "streakPulse 2s ease-in-out infinite",
+        "badge-shine": "badgeShine 3s linear infinite",
+        flicker: "flicker 0.8s ease-in-out infinite",
+        "scroll-down": "scrollDown 2s ease infinite",
       },
     },
   },
