@@ -84,7 +84,7 @@ export default function CodeReadingExecute({
           <div className="flex justify-end">
             <button
               onClick={() => onComplete(isCorrect ? 1 : 0)}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               계속하기
             </button>

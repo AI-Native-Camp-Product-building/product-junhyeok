@@ -111,7 +111,7 @@ export default function QuizQuestion({
     return (
       <div className="space-y-6">
         <div className="text-center space-y-4 py-8">
-          <div className="text-4xl font-bold text-dopamine-400">
+          <div className="text-4xl font-bold text-accent-400">
             {correctCount}/{questions.length}
           </div>
           <p className="text-surface-200 text-lg">
@@ -138,7 +138,7 @@ export default function QuizQuestion({
         <div className="flex justify-center">
           <button
             onClick={() => onComplete(correctCount, questions.length)}
-            className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+            className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
           >
             계속하기
           </button>
@@ -160,9 +160,9 @@ export default function QuizQuestion({
               key={i}
               className={`w-2 h-2 rounded-full transition-colors ${
                 i === currentIndex
-                  ? "bg-dopamine-400"
+                  ? "bg-accent-400"
                   : i < currentIndex
-                    ? "bg-dopamine-600"
+                    ? "bg-accent-600"
                     : "bg-surface-700"
               }`}
             />
@@ -183,7 +183,7 @@ export default function QuizQuestion({
               key={i}
               className="bg-surface-800 border border-surface-700 rounded-lg px-4 py-2 text-sm text-surface-200"
             >
-              <span className="text-dopamine-400 font-semibold">
+              <span className="text-accent-400 font-semibold">
                 힌트 {i + 1}:{" "}
               </span>
               {hint}
@@ -192,7 +192,7 @@ export default function QuizQuestion({
           {revealedHints < current.hints.length && (
             <button
               onClick={revealHint}
-              className="text-sm text-dopamine-400 hover:text-dopamine-300 transition-colors"
+              className="text-sm text-accent-400 hover:text-accent-300 transition-colors"
             >
               힌트 보기 ({revealedHints}/{current.hints.length})
             </button>
@@ -243,7 +243,7 @@ export default function QuizQuestion({
           <div className="flex justify-end">
             <button
               onClick={handleNext}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               {isLastQuestion ? "결과 보기" : "다음 문제"}
             </button>

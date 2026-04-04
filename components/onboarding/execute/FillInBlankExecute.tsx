@@ -94,7 +94,7 @@ export default function FillInBlankExecute({
                       ? "border-streak-400 bg-streak-400/10 text-streak-400"
                       : isWrongAnswer
                         ? "border-error-500 bg-error-500/10 text-error-400"
-                        : "border-dopamine-400 bg-surface-800 text-surface-200"
+                        : "border-accent-400 bg-surface-800 text-surface-200"
                   }`}
                 >
                   <option value="">___</option>
@@ -140,7 +140,7 @@ export default function FillInBlankExecute({
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+            className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
           >
             제출하기
           </button>
@@ -161,7 +161,7 @@ export default function FillInBlankExecute({
           <div className="flex justify-end">
             <button
               onClick={() => onComplete(score)}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               계속하기
             </button>

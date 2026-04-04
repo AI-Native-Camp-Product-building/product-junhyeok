@@ -144,7 +144,7 @@ export default function SequenceOrderingExecute({
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+            className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
           >
             제출하기
           </button>
@@ -165,7 +165,7 @@ export default function SequenceOrderingExecute({
           <div className="flex justify-end">
             <button
               onClick={() => onComplete(score)}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               계속하기
             </button>

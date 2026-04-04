@@ -56,7 +56,7 @@ export default function DebuggingExecute({
               key={i}
               className="bg-surface-800 border border-surface-700 rounded-lg px-4 py-2 text-sm text-surface-200"
             >
-              <span className="text-dopamine-400 font-semibold">
+              <span className="text-accent-400 font-semibold">
                 힌트 {i + 1}:{" "}
               </span>
               {hint}
@@ -65,7 +65,7 @@ export default function DebuggingExecute({
           {!answered && revealedHints < content.hints.length && (
             <button
               onClick={revealHint}
-              className="text-sm text-dopamine-400 hover:text-dopamine-300 transition-colors"
+              className="text-sm text-accent-400 hover:text-accent-300 transition-colors"
             >
               힌트 보기 ({revealedHints}/{content.hints.length})
             </button>
@@ -118,7 +118,7 @@ export default function DebuggingExecute({
           <div className="flex justify-end">
             <button
               onClick={() => onComplete(isCorrect ? 1 : 0)}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               계속하기
             </button>

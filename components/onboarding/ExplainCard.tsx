@@ -49,7 +49,7 @@ function markdownToHtml(md: string): string {
   // Inline code
   html = html.replace(
     /`([^`]+)`/g,
-    '<code class="font-mono text-sm bg-surface-900 px-1.5 py-0.5 rounded text-dopamine-400">$1</code>'
+    '<code class="font-mono text-sm bg-surface-900 px-1.5 py-0.5 rounded text-accent-400">$1</code>'
   );
 
   // Unordered lists
@@ -123,7 +123,7 @@ export default function ExplainCard({
           {content.keyPoints.map((point, i) => (
             <div
               key={i}
-              className="bg-surface-800 border-l-4 border-dopamine-400 rounded-r-lg px-4 py-3"
+              className="bg-surface-800 border-l-4 border-accent-400 rounded-r-lg px-4 py-3"
             >
               <p className="text-sm text-surface-200 leading-relaxed">
                 {point}
@@ -140,7 +140,7 @@ export default function ExplainCard({
       <div className="flex justify-end pt-4">
         <button
           onClick={onComplete}
-          className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+          className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
         >
           다음 단계로
         </button>

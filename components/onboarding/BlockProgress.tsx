@@ -40,9 +40,9 @@ export default function BlockProgress({
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                   status === "completed"
-                    ? "bg-dopamine-500 text-white"
+                    ? "bg-accent-500 text-white"
                     : status === "current"
-                      ? "bg-dopamine-400 text-surface-900 ring-2 ring-dopamine-400/40"
+                      ? "bg-accent-400 text-surface-900 ring-2 ring-accent-400/40"
                       : "bg-surface-800 text-surface-500 border border-surface-700"
                 }`}
               >
@@ -67,9 +67,9 @@ export default function BlockProgress({
               <span
                 className={`text-[10px] font-semibold tracking-wider ${
                   status === "completed"
-                    ? "text-dopamine-400"
+                    ? "text-accent-400"
                     : status === "current"
-                      ? "text-dopamine-300"
+                      ? "text-accent-300"
                       : "text-surface-500"
                 }`}
               >
@@ -81,7 +81,7 @@ export default function BlockProgress({
             {i < STEPS.length - 1 && (
               <div
                 className={`w-12 h-0.5 mx-2 mt-[-18px] transition-colors ${
-                  i < currentIndex ? "bg-dopamine-500" : "bg-surface-700"
+                  i < currentIndex ? "bg-accent-500" : "bg-surface-700"
                 }`}
               />
             )}

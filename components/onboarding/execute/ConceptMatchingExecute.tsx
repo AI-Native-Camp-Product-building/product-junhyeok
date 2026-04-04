@@ -84,19 +84,19 @@ export default function ConceptMatchingExecute({
               disabled={submitted}
               className={`w-full text-left px-4 py-3 rounded-lg border text-sm transition-colors ${
                 selectedLeft === idx
-                  ? "border-dopamine-400 bg-dopamine-400/10"
+                  ? "border-accent-400 bg-accent-400/10"
                   : matches[idx]
                     ? submitted
                       ? matches[idx] === content.pairs[idx].right
                         ? "border-streak-400 bg-streak-400/10"
                         : "border-error-500 bg-error-500/10"
-                      : "border-dopamine-500/50 bg-surface-800"
+                      : "border-accent-500/50 bg-surface-800"
                     : "border-surface-700 bg-surface-800 hover:border-surface-500"
               }`}
             >
               <span className="text-surface-200">{item}</span>
               {matches[idx] && (
-                <span className="block mt-1 text-xs text-dopamine-400">
+                <span className="block mt-1 text-xs text-accent-400">
                   &rarr; {matches[idx]}
                 </span>
               )}
@@ -118,7 +118,7 @@ export default function ConceptMatchingExecute({
                 usedRight.has(item)
                   ? "border-surface-700 bg-surface-800 opacity-40"
                   : selectedLeft !== null
-                    ? "border-surface-700 bg-surface-800 hover:border-dopamine-400 cursor-pointer"
+                    ? "border-surface-700 bg-surface-800 hover:border-accent-400 cursor-pointer"
                     : "border-surface-700 bg-surface-800"
               }`}
             >
@@ -133,7 +133,7 @@ export default function ConceptMatchingExecute({
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+            className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
           >
             제출하기
           </button>
@@ -154,7 +154,7 @@ export default function ConceptMatchingExecute({
           <div className="flex justify-end">
             <button
               onClick={() => onComplete(score)}
-              className="px-6 py-2.5 rounded-lg bg-dopamine-500 hover:bg-dopamine-600 text-white font-medium transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-accent-500 hover:bg-accent-600 text-white font-medium transition-colors"
             >
               계속하기
             </button>
