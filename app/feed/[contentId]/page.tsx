@@ -3,79 +3,64 @@
 import { use, useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/lib/state-context";
-import { getDay, getBlock } from "@/lib/curriculum-loader";
+import { getFeedItem } from "@/lib/feed-loader";
 import { calculateStreak } from "@/lib/streak";
 import { checkBadges } from "@/lib/badges";
 
-import BlockProgress from "@/components/onboarding/BlockProgress";
-import ExplainCard from "@/components/onboarding/ExplainCard";
-import ExecuteTask from "@/components/onboarding/ExecuteTask";
-import QuizQuestion from "@/components/onboarding/QuizQuestion";
+import BlockProgress from "@/components/feed/BlockProgress";
+import ExplainCard from "@/components/feed/ExplainCard";
+import ExecuteTask from "@/components/feed/ExecuteTask";
+import QuizQuestion from "@/components/feed/QuizQuestion";
 import CelebrationAnimation from "@/components/gamification/CelebrationAnimation";
 
 type Phase = "explain" | "execute" | "quiz" | "complete";
 
-export default function BlockPage({
+export default function ContentPage({
   params,
 }: {
-  params: Promise<{ dayId: string; blockId: string }>;
+  params: Promise<{ contentId: string }>;
 }) {
-  const { dayId, blockId } = use(params);
+  const { contentId } = use(params);
   const router = useRouter();
   const { state, updateState } = useAppState();
 
+  const [blockIndex, setBlockIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("explain");
   const [executeScore, setExecuteScore] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [quizTotal, setQuizTotal] = useState(0);
   const [newBadges, setNewBadges] = useState<string[]>([]);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [allBlocksDone, setAllBlocksDone] = useState(false);
 
   const startTimeRef = useRef<number>(Date.now());
 
-  const day = getDay(dayId);
-  const block = getBlock(dayId, blockId);
+  const feedItem = getFeedItem(contentId);
+  const block = feedItem?.blocks[blockIndex];
 
-  // Mark block as in_progress on mount
+  // Mark item as in_progress on mount
   useEffect(() => {
-    if (!day || !block) return;
+    if (!feedItem) return;
     updateState((prev) => {
-      const dayProgress = prev.onboarding.days[dayId] ?? {
-        status: "in_progress" as const,
-        blocks: {},
-        completedAt: null,
-      };
-      const blockProgress = dayProgress.blocks[blockId] ?? {
-        status: "not_started" as const,
-        explainSkipped: false,
-        executeScore: null,
-        quizScore: null,
-        timeSpentSeconds: 0,
-      };
-      if (blockProgress.status === "completed") return prev;
+      const itemProgress = prev.feed.items[contentId];
+      if (itemProgress?.status === "completed") return prev;
       return {
         ...prev,
-        onboarding: {
-          ...prev.onboarding,
-          days: {
-            ...prev.onboarding.days,
-            [dayId]: {
-              ...dayProgress,
+        feed: {
+          ...prev.feed,
+          items: {
+            ...prev.feed.items,
+            [contentId]: itemProgress ?? {
               status: "in_progress" as const,
-              blocks: {
-                ...dayProgress.blocks,
-                [blockId]: {
-                  ...blockProgress,
-                  status: "in_progress" as const,
-                },
-              },
+              blocks: {},
+              completedAt: null,
             },
           },
         },
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dayId, blockId]);
+  }, [contentId]);
 
   const handleExplainComplete = useCallback(() => {
     setPhase("execute");
@@ -95,63 +80,58 @@ export default function BlockPage({
       setQuizScore(score);
       setQuizTotal(total);
 
-      const timeSpentSeconds = Math.round((Date.now() - startTimeRef.current) / 1000);
+      if (!feedItem || !block) return;
+
+      const timeSpentSeconds = Math.round(
+        (Date.now() - startTimeRef.current) / 1000
+      );
       const timeSpentMinutes = Math.round(timeSpentSeconds / 60);
 
-      // Perform all state updates atomically
       updateState((prev) => {
-        // Build updated block progress
-        const dayProgress = prev.onboarding.days[dayId] ?? {
+        const itemProgress = prev.feed.items[contentId] ?? {
           status: "in_progress" as const,
           blocks: {},
           completedAt: null,
         };
-        const blockProgress = dayProgress.blocks[blockId] ?? {
-          status: "not_started" as const,
-          explainSkipped: false,
-          executeScore: null,
-          quizScore: null,
-          timeSpentSeconds: 0,
-        };
 
         const updatedBlock = {
-          ...blockProgress,
           status: "completed" as const,
+          explainSkipped: false,
           executeScore: score,
           quizScore: score,
           timeSpentSeconds,
         };
 
         const updatedBlocks = {
-          ...dayProgress.blocks,
-          [blockId]: updatedBlock,
+          ...itemProgress.blocks,
+          [block.id]: updatedBlock,
         };
 
-        // Check if all blocks in this day are completed
-        const allBlocksDone =
-          day!.blocks.length > 0 &&
-          day!.blocks.every(
+        // Check if all blocks in this feed item are completed
+        const itemComplete =
+          feedItem.blocks.length > 0 &&
+          feedItem.blocks.every(
             (b) => updatedBlocks[b.id]?.status === "completed"
           );
 
-        const updatedDayProgress = {
-          ...dayProgress,
+        const updatedItemProgress = {
+          ...itemProgress,
           blocks: updatedBlocks,
-          status: allBlocksDone
+          status: itemComplete
             ? ("completed" as const)
             : ("in_progress" as const),
-          completedAt: allBlocksDone
+          completedAt: itemComplete
             ? new Date().toISOString()
-            : dayProgress.completedAt,
+            : itemProgress.completedAt,
         };
 
         // Calculate streak
         const updatedStreak = calculateStreak(prev.streak);
 
-        // Build new history entry
+        // Build history entry
         const historyEntry = {
           date: new Date().toISOString(),
-          dayId,
+          dayId: contentId,
           duration: timeSpentMinutes,
           quizScore: score,
           quizTotal: total,
@@ -159,11 +139,11 @@ export default function BlockPage({
 
         const nextState = {
           ...prev,
-          onboarding: {
-            ...prev.onboarding,
-            days: {
-              ...prev.onboarding.days,
-              [dayId]: updatedDayProgress,
+          feed: {
+            ...prev.feed,
+            items: {
+              ...prev.feed.items,
+              [contentId]: updatedItemProgress,
             },
           },
           streak: updatedStreak,
@@ -176,12 +156,14 @@ export default function BlockPage({
         const earned = checkBadges(nextState);
         if (earned.length > 0) {
           nextState.badges = [...nextState.badges, ...earned];
-          // We need to signal new badges via a side channel since setState is sync
-          // Using a timeout to set celebration state after this update
           setTimeout(() => {
             setNewBadges(earned);
             setShowCelebration(true);
           }, 0);
+        }
+
+        if (itemComplete) {
+          setTimeout(() => setAllBlocksDone(true), 0);
         }
 
         return nextState;
@@ -189,35 +171,37 @@ export default function BlockPage({
 
       setPhase("complete");
     },
-    [dayId, blockId, day, updateState]
+    [contentId, feedItem, block, updateState]
   );
 
-  // Navigation helpers
-  const getNextBlockId = (): string | null => {
-    if (!day) return null;
-    const currentIdx = day.blocks.findIndex((b) => b.id === blockId);
-    if (currentIdx < 0 || currentIdx >= day.blocks.length - 1) return null;
-    return day.blocks[currentIdx + 1].id;
-  };
+  const handleNextBlock = useCallback(() => {
+    if (!feedItem) return;
+    if (blockIndex < feedItem.blocks.length - 1) {
+      setBlockIndex((prev) => prev + 1);
+      setPhase("explain");
+      setExecuteScore(0);
+      setQuizScore(0);
+      setQuizTotal(0);
+      startTimeRef.current = Date.now();
+    }
+  }, [feedItem, blockIndex]);
 
-  const isLastBlock = (): boolean => {
-    if (!day) return true;
-    const currentIdx = day.blocks.findIndex((b) => b.id === blockId);
-    return currentIdx === day.blocks.length - 1;
-  };
+  const isLastBlock = feedItem
+    ? blockIndex === feedItem.blocks.length - 1
+    : true;
 
-  // Error states
-  if (!day || !block) {
+  // Error state
+  if (!feedItem || !block) {
     return (
       <div className="text-center py-16 space-y-4">
         <p className="text-surface-400 text-lg">
-          존재하지 않는 블록입니다.
+          존재하지 않는 콘텐츠입니다.
         </p>
         <button
-          onClick={() => router.push("/onboarding")}
-          className="text-dopamine-400 hover:text-dopamine-300 text-sm transition-colors"
+          onClick={() => router.push("/feed")}
+          className="text-accent-400 hover:text-accent-300 text-sm transition-colors"
         >
-          온보딩으로 돌아가기
+          피드로 돌아가기
         </button>
       </div>
     );
@@ -225,19 +209,29 @@ export default function BlockPage({
 
   return (
     <div className="space-y-6">
-      {/* Header: block progress + timer */}
+      {/* Header: block progress + block counter + timer */}
       <div className="flex items-center justify-between">
         <BlockProgress
           currentPhase={phase === "complete" ? "quiz" : phase}
         />
-        <div className="text-sm text-surface-400 tabular-nums">
-          {Math.round((Date.now() - startTimeRef.current) / 60000) || 0}분
-          경과
+        <div className="flex items-center gap-3">
+          {feedItem.blocks.length > 1 && (
+            <span className="text-xs text-surface-500 tabular-nums">
+              블록 {blockIndex + 1}/{feedItem.blocks.length}
+            </span>
+          )}
+          <div className="text-sm text-surface-400 tabular-nums">
+            {Math.round((Date.now() - startTimeRef.current) / 60000) || 0}분
+            경과
+          </div>
         </div>
       </div>
 
-      {/* Block title */}
+      {/* Content title + block title */}
       <div className="space-y-1">
+        <p className="text-xs font-semibold text-accent-400 uppercase tracking-wider">
+          {feedItem.title}
+        </p>
         <h2 className="text-2xl font-bold text-surface-50">{block.title}</h2>
       </div>
 
@@ -248,7 +242,7 @@ export default function BlockPage({
             content={block.explain}
             onComplete={handleExplainComplete}
             onSkip={handleExplainSkip}
-            blockId={blockId}
+            blockId={block.id}
           />
         )}
 
@@ -262,7 +256,7 @@ export default function BlockPage({
               onClick={() => handleExecuteComplete(0)}
               className="block mx-auto text-xs text-surface-500 hover:text-surface-300 transition-colors"
             >
-              건너뛰기 →
+              건너뛰기
             </button>
           </div>
         )}
@@ -273,14 +267,16 @@ export default function BlockPage({
               questions={block.quiz.questions}
               onComplete={handleQuizComplete}
               topicId={block.topicId}
-              dayId={dayId}
-              blockId={blockId}
+              dayId={contentId}
+              blockId={block.id}
             />
             <button
-              onClick={() => handleQuizComplete(0, block.quiz.questions.length)}
+              onClick={() =>
+                handleQuizComplete(0, block.quiz.questions.length)
+              }
               className="block mx-auto text-xs text-surface-500 hover:text-surface-300 transition-colors"
             >
-              건너뛰기 →
+              건너뛰기
             </button>
           </div>
         )}
@@ -289,8 +285,8 @@ export default function BlockPage({
           <div className="space-y-8">
             {/* Results */}
             <div className="text-center space-y-4 py-4">
-              <div className="text-5xl font-bold text-dopamine-400">
-                블록 완료!
+              <div className="text-5xl font-bold text-accent-400">
+                {allBlocksDone ? "학습 완료!" : "블록 완료!"}
               </div>
               <p className="text-surface-300">학습 결과를 확인하세요</p>
             </div>
@@ -304,7 +300,7 @@ export default function BlockPage({
               </div>
               <div className="rounded-xl border border-surface-700 bg-surface-800/50 p-4 text-center">
                 <p className="text-xs text-surface-400 mb-1">퀴즈 점수</p>
-                <p className="text-2xl font-bold text-dopamine-400">
+                <p className="text-2xl font-bold text-accent-400">
                   {quizScore}/{quizTotal}
                 </p>
               </div>
@@ -320,23 +316,26 @@ export default function BlockPage({
             )}
 
             {/* Navigation */}
-            <div className="flex justify-center pt-2">
-              {isLastBlock() ? (
-                <button
-                  onClick={() => router.push("/onboarding")}
-                  className="px-8 py-3 rounded-xl bg-dopamine-500 hover:bg-dopamine-600 text-white font-semibold transition-colors"
-                >
-                  Day 완료!
-                </button>
+            <div className="flex justify-center gap-3 pt-2">
+              {isLastBlock || allBlocksDone ? (
+                <>
+                  <button
+                    onClick={() => router.push("/feed")}
+                    className="px-6 py-3 rounded-xl border border-surface-700 text-surface-200 hover:border-surface-500 font-medium transition-colors"
+                  >
+                    피드로 돌아가기
+                  </button>
+                  <button
+                    onClick={() => router.push("/feed")}
+                    className="px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-600 text-white font-semibold transition-colors"
+                  >
+                    다음 추천 보기
+                  </button>
+                </>
               ) : (
                 <button
-                  onClick={() => {
-                    const nextId = getNextBlockId();
-                    if (nextId) {
-                      router.push(`/onboarding/${dayId}/${nextId}`);
-                    }
-                  }}
-                  className="px-8 py-3 rounded-xl bg-dopamine-500 hover:bg-dopamine-600 text-white font-semibold transition-colors"
+                  onClick={handleNextBlock}
+                  className="px-8 py-3 rounded-xl bg-accent-500 hover:bg-accent-600 text-white font-semibold transition-colors"
                 >
                   다음 블록으로
                 </button>
