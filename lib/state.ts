@@ -2,6 +2,7 @@ import type { AppState, FeedItemProgress, BlockProgress } from "./types";
 
 const STORAGE_KEY = "claude-dopamine-sprint-web";
 const STATE_VERSION = 2;
+const V1_BACKUP_KEY = `${STORAGE_KEY}:v1-backup`;
 
 // V1 types for migration
 interface V1DayProgress {
@@ -26,39 +27,68 @@ interface V1State {
   history: AppState["history"];
 }
 
-function migrateV1toV2(oldState: V1State): AppState {
+function migrateV1toV2(oldState: Partial<V1State>): AppState {
+  // Best-effort migration: each field is wrapped so a corrupted V1 partially
+  // succeeds rather than blowing away all user progress.
+  const base = getInitialState();
   const items: Record<string, FeedItemProgress> = {};
 
-  for (const [dayId, dayProgress] of Object.entries(oldState.onboarding.days)) {
-    if (dayProgress.status === "locked") continue;
+  try {
+    const days = oldState?.onboarding?.days;
+    if (days && typeof days === "object") {
+      for (const [dayId, dayProgress] of Object.entries(days)) {
+        try {
+          if (!dayProgress || dayProgress.status === "locked") continue;
 
-    const migratedBlocks: Record<string, BlockProgress> = {};
-    for (const [blockId, block] of Object.entries(dayProgress.blocks)) {
-      migratedBlocks[blockId] = {
-        ...block,
-        status: (block.status === "completed" ? "completed" : block.status === "in_progress" ? "in_progress" : "not_started") as BlockProgress["status"],
-      };
+          const migratedBlocks: Record<string, BlockProgress> = {};
+          const blocks = dayProgress.blocks ?? {};
+          for (const [blockId, block] of Object.entries(blocks)) {
+            try {
+              migratedBlocks[blockId] = {
+                ...block,
+                status: (block.status === "completed"
+                  ? "completed"
+                  : block.status === "in_progress"
+                    ? "in_progress"
+                    : "not_started") as BlockProgress["status"],
+              };
+            } catch {
+              // skip bad block
+            }
+          }
+
+          items[dayId] = {
+            status: dayProgress.status === "completed" ? "completed" : "in_progress",
+            blocks: migratedBlocks,
+            completedAt: dayProgress.completedAt ?? null,
+          };
+        } catch {
+          // skip bad day
+        }
+      }
     }
-
-    items[dayId] = {
-      status: dayProgress.status === "completed" ? "completed" : "in_progress",
-      blocks: migratedBlocks,
-      completedAt: dayProgress.completedAt,
-    };
+  } catch {
+    // leave items as {}
   }
 
   return {
     stateVersion: 2,
     feed: {
       items,
-      completedAt: oldState.onboarding.completedAt,
+      completedAt: oldState?.onboarding?.completedAt ?? null,
     },
-    streak: oldState.streak,
-    badges: oldState.badges,
-    totalStudyMinutes: oldState.totalStudyMinutes,
-    totalSessions: oldState.totalSessions,
-    feedback: oldState.feedback,
-    history: oldState.history,
+    streak: oldState?.streak ?? base.streak,
+    badges: Array.isArray(oldState?.badges) ? oldState!.badges : base.badges,
+    totalStudyMinutes:
+      typeof oldState?.totalStudyMinutes === "number"
+        ? oldState.totalStudyMinutes
+        : base.totalStudyMinutes,
+    totalSessions:
+      typeof oldState?.totalSessions === "number"
+        ? oldState.totalSessions
+        : base.totalSessions,
+    feedback: oldState?.feedback ?? base.feedback,
+    history: Array.isArray(oldState?.history) ? oldState!.history : base.history,
   };
 }
 
@@ -93,16 +123,33 @@ export function loadState(): AppState {
     if (!raw) {
       return getInitialState();
     }
-    const parsed = JSON.parse(raw);
+    let parsed: { stateVersion?: number } & Record<string, unknown>;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return getInitialState();
+    }
     if (parsed.stateVersion === 1) {
-      const migrated = migrateV1toV2(parsed as V1State);
-      saveState(migrated);
-      return migrated;
+      // Preserve raw V1 in a backup key before mutating storage so users can
+      // recover progress if migration is buggy.
+      try {
+        localStorage.setItem(V1_BACKUP_KEY, raw);
+      } catch {
+        // ignore quota errors
+      }
+      try {
+        const migrated = migrateV1toV2(parsed as Partial<V1State>);
+        saveState(migrated);
+        return migrated;
+      } catch (err) {
+        console.error("V1→V2 migration failed, returning best-effort state:", err);
+        return migrateV1toV2({});
+      }
     }
     if (parsed.stateVersion !== STATE_VERSION) {
       return getInitialState();
     }
-    return parsed as AppState;
+    return parsed as unknown as AppState;
   } catch {
     return getInitialState();
   }

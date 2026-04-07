@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { DailyFeedItem, FeedCategory } from "@/lib/daily-feed-types";
+import { safeHref } from "@/lib/sanitize-input";
 import SourceBadge from "./SourceBadge";
 
 const CATEGORY_PILL: Record<FeedCategory, { label: string; color: string }> = {
@@ -20,6 +21,7 @@ interface FeedCardProps {
 export default function FeedCard({ item, className = "" }: FeedCardProps) {
   const pill = CATEGORY_PILL[item.category];
   const hasQuiz = item.quiz && item.quiz.length > 0;
+  const safeSourceUrl = safeHref(item.sourceUrl);
 
   return (
     <article
@@ -61,17 +63,21 @@ export default function FeedCard({ item, className = "" }: FeedCardProps) {
 
       {/* Bottom actions */}
       <div className="flex items-center justify-between pt-1">
-        <a
-          href={item.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-surface-400 hover:text-surface-200 transition-colors inline-flex items-center gap-1"
-        >
-          원문 보기
-          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-          </svg>
-        </a>
+        {safeSourceUrl ? (
+          <a
+            href={safeSourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-surface-400 hover:text-surface-200 transition-colors inline-flex items-center gap-1"
+          >
+            원문 보기
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+        ) : (
+          <span />
+        )}
         {hasQuiz && (
           <Link
             href={`/daily-feed/${item.id}`}

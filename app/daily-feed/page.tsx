@@ -14,18 +14,24 @@ export default function DailyFeedPage() {
 
   useEffect(() => {
     async function loadFeed() {
+      const isDev = process.env.NODE_ENV === "development";
       try {
         const res = await fetch("/api/daily-feed");
         if (res.ok) {
           const data: DailyFeedResponse = await res.json();
           setItems(data.items);
-        } else {
-          // API not available — use mock data
+        } else if (isDev) {
+          // Dev-only fallback to mock data
           setItems(mockFeedItems);
+        } else {
+          setError("피드를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
         }
       } catch {
-        // Fallback to mock data
-        setItems(mockFeedItems);
+        if (isDev) {
+          setItems(mockFeedItems);
+        } else {
+          setError("피드를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+        }
       } finally {
         setLoading(false);
       }

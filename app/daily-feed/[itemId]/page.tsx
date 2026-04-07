@@ -2,9 +2,10 @@
 
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { DailyFeedItem } from "@/lib/daily-feed-types";
+import type { DailyFeedItem, DailyFeedResponse } from "@/lib/daily-feed-types";
 import { mockFeedItems } from "@/lib/mock-feed-data";
 import { SourceBadge, QuizCard } from "@/components/daily-feed";
+import { safeHref } from "@/lib/sanitize-input";
 
 export default function DailyFeedItemPage({
   params,
@@ -15,12 +16,47 @@ export default function DailyFeedItemPage({
   const router = useRouter();
   const [item, setItem] = useState<DailyFeedItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Try to find from mock data (API fallback)
-    const found = mockFeedItems.find((i) => i.id === itemId);
-    setItem(found ?? null);
-    setLoading(false);
+    let cancelled = false;
+    async function loadItem() {
+      const isDev = process.env.NODE_ENV === "development";
+      try {
+        const res = await fetch("/api/daily-feed");
+        if (res.ok) {
+          const data: DailyFeedResponse = await res.json();
+          const found = data.items.find((i) => i.id === itemId);
+          if (cancelled) return;
+          if (found) {
+            setItem(found);
+          } else if (isDev) {
+            setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+          } else {
+            setItem(null);
+          }
+        } else if (isDev) {
+          if (cancelled) return;
+          setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+        } else {
+          if (cancelled) return;
+          setError("콘텐츠를 불러오지 못했습니다.");
+        }
+      } catch {
+        if (cancelled) return;
+        if (isDev) {
+          setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+        } else {
+          setError("콘텐츠를 불러오지 못했습니다.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadItem();
+    return () => {
+      cancelled = true;
+    };
   }, [itemId]);
 
   if (loading) {
@@ -29,6 +65,21 @@ export default function DailyFeedItemPage({
         <div className="h-8 w-3/4 bg-surface-800 rounded-lg animate-pulse" />
         <div className="h-4 w-1/2 bg-surface-800/60 rounded animate-pulse" />
         <div className="h-64 bg-surface-800 rounded-xl animate-pulse" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-16 space-y-3">
+        <div className="text-4xl">⚠️</div>
+        <p className="text-error-400 text-sm">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-sm text-accent-400 hover:text-accent-300 transition-colors"
+        >
+          다시 시도
+        </button>
       </div>
     );
   }
@@ -48,6 +99,7 @@ export default function DailyFeedItemPage({
   }
 
   const hasQuiz = item.quiz && item.quiz.length > 0;
+  const safeSourceUrl = safeHref(item.sourceUrl);
 
   return (
     <div className="space-y-8">
@@ -83,17 +135,19 @@ export default function DailyFeedItemPage({
       )}
 
       {/* Source link */}
-      <a
-        href={item.sourceUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-700 text-sm text-surface-300 hover:border-surface-500 hover:text-surface-100 transition-colors"
-      >
-        원문 보기
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
-      </a>
+      {safeSourceUrl && (
+        <a
+          href={safeSourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-surface-700 text-sm text-surface-300 hover:border-surface-500 hover:text-surface-100 transition-colors"
+        >
+          원문 보기
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      )}
 
       {/* Quiz section */}
       {hasQuiz && (

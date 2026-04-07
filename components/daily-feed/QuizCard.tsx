@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { QuizQuestion } from "@/lib/daily-feed-types";
+import { seededShuffle } from "@/lib/seeded-shuffle";
 
 interface QuizCardProps {
   questions: QuizQuestion[];
@@ -15,25 +16,29 @@ export default function QuizCard({ questions, onComplete, className = "" }: Quiz
   const [isRevealed, setIsRevealed] = useState(false);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  // Use a ref so the final-question score is never lost to stale closure.
+  const correctCountRef = useRef(0);
 
   const question = questions[currentIndex];
-  if (!question) return null;
 
-  // Shuffle answer + distractors into options (stable per question)
-  const options = [question.answer, ...question.distractors];
-  // Use a deterministic sort based on the option text for consistency
-  const sortedOptions = [...options].sort((a, b) => {
-    const hashA = a.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-    const hashB = b.split("").reduce((h, c) => ((h << 5) - h + c.charCodeAt(0)) | 0, 0);
-    return hashA - hashB;
-  });
+  // Seeded shuffle keyed on question.id: stable across renders, varied across
+  // questions, and prevents the deterministic-position bias of the previous
+  // hash-sort approach.
+  const sortedOptions = useMemo(() => {
+    if (!question) return [];
+    const options = [question.answer, ...question.distractors];
+    return seededShuffle(options, question.id);
+  }, [question]);
+
+  if (!question) return null;
 
   const handleSelect = (option: string) => {
     if (isRevealed) return;
     setSelectedAnswer(option);
     setIsRevealed(true);
     if (option === question.answer) {
-      setScore((s) => s + 1);
+      correctCountRef.current += 1;
+      setScore(correctCountRef.current);
     }
   };
 
@@ -43,9 +48,8 @@ export default function QuizCard({ questions, onComplete, className = "" }: Quiz
       setSelectedAnswer(null);
       setIsRevealed(false);
     } else {
-      const finalScore = selectedAnswer === question.answer ? score : score;
       setFinished(true);
-      onComplete?.(finalScore, questions.length);
+      onComplete?.(correctCountRef.current, questions.length);
     }
   };
 

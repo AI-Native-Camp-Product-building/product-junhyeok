@@ -44,8 +44,6 @@ Focus on practical, applicable knowledge that Claude Code users would benefit fr
 Respond with JSON only matching this shape:
 { "quizzes": [ { "feedItemId": string, "questions": [ { "question": string, "answer": string, "distractors": [string, string, string], "explanation": string } ] } ] }`;
 
-let quizCounter = 0;
-
 export async function generateQuizzes(
   items: DailyFeedItem[]
 ): Promise<DailyFeedItem[]> {
@@ -98,8 +96,8 @@ export async function generateQuizzes(
 
     const quizMap = new Map<string, QuizQuestion[]>();
     for (const quiz of validated.data.quizzes) {
-      const questions: QuizQuestion[] = quiz.questions.map((q) => ({
-        id: `quiz-${++quizCounter}-${Date.now()}`,
+      const questions: QuizQuestion[] = quiz.questions.map((q, index) => ({
+        id: `quiz-${quiz.feedItemId}-${index}`,
         question: q.question,
         answer: q.answer,
         distractors: q.distractors,

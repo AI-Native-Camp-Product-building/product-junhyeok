@@ -32,6 +32,35 @@ function sanitizeUrl(value: unknown): string {
   }
 }
 
+/**
+ * Returns true if the URL is a safe https:// link, false otherwise.
+ * Defends against javascript:, data:, and other dangerous schemes.
+ */
+export function isSafeUrl(value: unknown): boolean {
+  if (typeof value !== "string" || value.length === 0) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Returns the URL if it is safe to render in an href, otherwise undefined.
+ * Use to gate `<a href={safeHref(url)}>` rendering against XSS.
+ */
+export function safeHref(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:") return undefined;
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+}
+
 function sanitizeTags(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   const out: string[] = [];
