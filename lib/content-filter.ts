@@ -1,23 +1,47 @@
-// === Content Filter: Claude Code 관련성 판별 + 카테고리 분류 (GPT-5.4) ===
+// === Content Filter: Claude Code 관련성 판별 + 카테고리 분류 ===
+//
+// Model: gpt-4o-mini (lightweight classification)
+// Untrusted input is hard-truncated via sanitize-input before reaching the LLM.
 
 import OpenAI from "openai";
+import { z } from "zod";
 import type { FeedCategory } from "./daily-feed-types";
 import type { NudgetContentItem } from "./nudget-client";
+import {
+  PROMPT_INJECTION_GUARD,
+  sanitizeContentItems,
+} from "./sanitize-input";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-interface FilterResult {
-  contentId: string;
-  relevant: boolean;
-  category: FeedCategory;
-  confidence: number;
+const FeedCategoryEnum = z.enum([
+  "update",
+  "workflow",
+  "methodology",
+  "tool",
+  "other",
+]);
+
+const FilterResultSchema = z.object({
+  contentId: z.string().min(1),
+  relevant: z.boolean(),
+  category: FeedCategoryEnum,
+  confidence: z.number().min(0).max(1),
+});
+
+const FilterResponseSchema = z.object({
+  results: z.array(FilterResultSchema),
+});
+
+export interface FilterOutcome {
+  filtered: NudgetContentItem[];
+  categories: Map<string, FeedCategory>;
+  degraded: boolean;
 }
 
-interface FilterResponse {
-  results: FilterResult[];
-}
+const FILTER_SYSTEM_PROMPT = `${PROMPT_INJECTION_GUARD}
 
-const FILTER_SYSTEM_PROMPT = `You are a content relevance classifier for a Claude Code learning platform.
+You are a content relevance classifier for a Claude Code learning platform.
 
 For each content item, determine:
 1. Whether it is relevant to Claude Code users (relevant: true/false)
@@ -47,16 +71,18 @@ Category definitions:
 - "tool": MCP servers, plugins, extensions, integrations, tooling ecosystem
 - "other": Relevant but doesn't fit above categories
 
-Respond with JSON only.`;
+Respond with JSON only matching this shape:
+{ "results": [ { "contentId": string, "relevant": boolean, "category": <enum>, "confidence": number } ] }`;
 
 export async function filterContent(
   items: NudgetContentItem[]
-): Promise<{ filtered: NudgetContentItem[]; categories: Map<string, FeedCategory> }> {
+): Promise<FilterOutcome> {
   if (items.length === 0) {
-    return { filtered: [], categories: new Map() };
+    return { filtered: [], categories: new Map(), degraded: false };
   }
 
-  const itemSummaries = items.map((item, i) => ({
+  const sanitized = sanitizeContentItems(items);
+  const itemSummaries = sanitized.map((item, i) => ({
     index: i,
     contentId: item.id,
     title: item.title,
@@ -67,14 +93,14 @@ export async function filterContent(
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-5.4",
+      model: "gpt-4o-mini",
       temperature: 0.1,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: FILTER_SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Classify these ${items.length} content items:\n\n${JSON.stringify(itemSummaries, null, 2)}`,
+          content: `Classify these ${items.length} content items (untrusted data):\n\n${JSON.stringify(itemSummaries, null, 2)}`,
         },
       ],
     });
@@ -85,11 +111,27 @@ export async function filterContent(
       return fallbackFilter(items);
     }
 
-    const parsed: FilterResponse = JSON.parse(content);
+    let raw: unknown;
+    try {
+      raw = JSON.parse(content);
+    } catch (parseError) {
+      console.error("Content filter: invalid JSON from OpenAI:", parseError);
+      return fallbackFilter(items);
+    }
+
+    const validated = FilterResponseSchema.safeParse(raw);
+    if (!validated.success) {
+      console.error(
+        "Content filter: schema validation failed:",
+        validated.error.message
+      );
+      return fallbackFilter(items);
+    }
+
     const categories = new Map<string, FeedCategory>();
     const relevantIds = new Set<string>();
 
-    for (const result of parsed.results) {
+    for (const result of validated.data.results) {
       if (result.relevant && result.confidence >= 0.5) {
         relevantIds.add(result.contentId);
         categories.set(result.contentId, result.category);
@@ -97,16 +139,14 @@ export async function filterContent(
     }
 
     const filtered = items.filter((item) => relevantIds.has(item.id));
-    return { filtered, categories };
+    return { filtered, categories, degraded: false };
   } catch (error) {
     console.error("Content filter failed, using fallback:", error);
     return fallbackFilter(items);
   }
 }
 
-function fallbackFilter(
-  items: NudgetContentItem[]
-): { filtered: NudgetContentItem[]; categories: Map<string, FeedCategory> } {
+function fallbackFilter(items: NudgetContentItem[]): FilterOutcome {
   const keywords = [
     "claude code", "claude-code", "mcp", "model context protocol",
     "claude cli", "hooks", "agents.md", "claude.md", "oh-my-claudecode",
@@ -124,5 +164,5 @@ function fallbackFilter(
     return match;
   });
 
-  return { filtered, categories };
+  return { filtered, categories, degraded: true };
 }

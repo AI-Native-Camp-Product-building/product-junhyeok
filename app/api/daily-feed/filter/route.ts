@@ -1,32 +1,14 @@
+// TODO: pipeline-engineer 본 구현 완료 시 활성화.
+// 현재는 인증/구현이 없는 스캐폴드이므로 501 응답으로 차단한다.
+
 import { NextResponse } from "next/server";
-import type { NudgetContentItem } from "@/lib/nudget-client";
 
-interface FilterRequestBody {
-  items: NudgetContentItem[];
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = (await request.json()) as FilterRequestBody;
-
-    if (!body.items || !Array.isArray(body.items)) {
-      return NextResponse.json(
-        { error: "Request body must include an items array" },
-        { status: 400 }
-      );
-    }
-
-    // Pass-through scaffold — pipeline-engineer will add LLM filtering here
-    return NextResponse.json({
-      items: body.items,
-      filtered: body.items.length,
-      total: body.items.length,
-    });
-  } catch (error) {
-    console.error("Daily feed filter API error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+export async function POST() {
+  return NextResponse.json(
+    {
+      error: "Not Implemented",
+      message: "필터 엔드포인트는 아직 구현되지 않았습니다.",
+    },
+    { status: 501 }
+  );
 }

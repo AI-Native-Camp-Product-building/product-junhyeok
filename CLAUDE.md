@@ -22,7 +22,8 @@ npm run lint     # ESLint
 - **Next.js 16** (App Router, Turbopack)
 - **React 19**, TypeScript strict
 - **Tailwind CSS v4** (`@theme inline` in globals.css + tailwind.config.ts 병행)
-- **OpenAI SDK** (`openai` npm, GPT-5.4) — 콘텐츠 필터링 + 퀴즈 생성
+- **OpenAI SDK** (`openai` npm) — 콘텐츠 필터링(`gpt-4o-mini`) + 변환/퀴즈 생성(`gpt-4o`)
+- **zod** — LLM 응답 런타임 검증
 - **Nudget API** (`X-API-Key` 인증) — 콘텐츠 소스 (11개 채널)
 - **localStorage** — 클라이언트 상태 (게이미피케이션, 진도)
 - **Next.js API Routes** — 서버사이드 Nudget/OpenAI 프록시
@@ -38,10 +39,11 @@ npm run lint     # ESLint
 ### Daily Feed 파이프라인
 ```
 Nudget API → lib/nudget-client.ts (fetch)
-  → lib/content-filter.ts (GPT-5.4 관련성 판별)
-  → lib/nudget-transformer.ts (DailyFeedItem 변환)
-  → lib/quiz-generator.ts (GPT-5.4 MCQ 생성)
-  → lib/feed-cache.ts (날짜 기반 캐시)
+  → lib/sanitize-input.ts (untrusted 입력 truncate + prompt-injection guard)
+  → lib/content-filter.ts (gpt-4o-mini 관련성 판별, zod 검증)
+  → lib/nudget-transformer.ts (gpt-4o DailyFeedItem 변환, zod 검증)
+  → lib/quiz-generator.ts (gpt-4o MCQ 생성, zod 검증)
+  → lib/feed-cache.ts (KST 날짜 기반 캐시 + single-flight)
   → app/api/daily-feed/route.ts (API 응답)
   → app/daily-feed/page.tsx (UI 렌더링)
 ```
@@ -60,13 +62,13 @@ Nudget API → lib/nudget-client.ts (fetch)
 - 현재 daily-feed에서는 미사용. V1.1에서 재활성화 예정.
 
 ### API Routes
-- `app/api/daily-feed/route.ts` — GET: Nudget digest fetch → filter → transform → quiz → cache → respond
-- `app/api/daily-feed/filter/route.ts` — POST: 개별 콘텐츠 필터링 엔드포인트
+- `app/api/daily-feed/route.ts` — GET: Nudget digest fetch → filter → transform → quiz → cache → respond. `dynamic = "force-dynamic"` + 자체 in-memory 캐시(KST 일자 키, single-flight, 50개 cap).
+- `app/api/daily-feed/filter/route.ts` — POST: **501 Not Implemented** 스캐폴드 (pipeline-engineer 본 구현 시 활성화).
 
 ### 환경변수
 ```
 NUDGET_API_KEY    — Nudget API 인증
-OPENAI_API_KEY    — GPT-5.4 콘텐츠 필터링/퀴즈 생성
+OPENAI_API_KEY    — gpt-4o-mini(필터) / gpt-4o(변환·퀴즈) 호출
 ```
 
 ## Design Tokens — Camp Design System

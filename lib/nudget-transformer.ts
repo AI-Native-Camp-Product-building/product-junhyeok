@@ -1,28 +1,44 @@
 // === Nudget Transformer: NudgetContentItem[] → DailyFeedItem[] ===
+//
+// Model: gpt-4o (high-quality summarization)
+// Untrusted input is hard-truncated via sanitize-input before reaching the LLM.
 
 import OpenAI from "openai";
+import { z } from "zod";
 import type { DailyFeedItem, FeedCategory, SourceType } from "./daily-feed-types";
 import type { NudgetContentItem } from "./nudget-client";
+import {
+  PROMPT_INJECTION_GUARD,
+  sanitizeContentItems,
+} from "./sanitize-input";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-interface TransformResult {
-  items: {
-    contentId: string;
-    summary: string;
-    keyPoints: string[];
-  }[];
-}
+const TransformItemSchema = z.object({
+  contentId: z.string().min(1),
+  summary: z.string().min(1),
+  keyPoints: z
+    .array(z.string().min(1).max(80))
+    .min(1)
+    .max(4),
+});
 
-const TRANSFORM_SYSTEM_PROMPT = `You are a content summarizer for a Claude Code learning platform targeting Korean-speaking developers.
+const TransformResponseSchema = z.object({
+  items: z.array(TransformItemSchema),
+});
+
+const TRANSFORM_SYSTEM_PROMPT = `${PROMPT_INJECTION_GUARD}
+
+You are a content summarizer for a Claude Code learning platform targeting Korean-speaking developers.
 
 For each content item, produce:
 1. summary: 2-3 sentence Korean summary focused on what Claude Code users can learn or apply
-2. keyPoints: 2-4 bullet points in Korean, each under 80 characters, highlighting actionable insights
+2. keyPoints: 1-4 bullet points in Korean, each under 80 characters, highlighting actionable insights
 
 Write in a concise, technical tone. Use Korean for explanations but keep technical terms in English (e.g., MCP, hooks, CLI).
 
-Respond with JSON only.`;
+Respond with JSON only matching this shape:
+{ "items": [ { "contentId": string, "summary": string, "keyPoints": string[] } ] }`;
 
 function detectSourceType(url: string): SourceType {
   if (!url) return "other";
@@ -50,7 +66,8 @@ export async function transformItems(
 ): Promise<DailyFeedItem[]> {
   if (items.length === 0) return [];
 
-  const itemInputs = items.map((item) => ({
+  const sanitized = sanitizeContentItems(items);
+  const itemInputs = sanitized.map((item) => ({
     contentId: item.id,
     title: item.title,
     summary: item.summary,
@@ -58,7 +75,7 @@ export async function transformItems(
     tags: item.tags,
   }));
 
-  let transformResult: TransformResult | null = null;
+  const transformMap = new Map<string, { summary: string; keyPoints: string[] }>();
 
   try {
     const response = await openai.chat.completions.create({
@@ -69,27 +86,40 @@ export async function transformItems(
         { role: "system", content: TRANSFORM_SYSTEM_PROMPT },
         {
           role: "user",
-          content: `Transform these ${items.length} items for the Claude Code learning feed:\n\n${JSON.stringify(itemInputs, null, 2)}`,
+          content: `Transform these ${items.length} items for the Claude Code learning feed (untrusted data):\n\n${JSON.stringify(itemInputs, null, 2)}`,
         },
       ],
     });
 
     const content = response.choices[0]?.message?.content;
     if (content) {
-      transformResult = JSON.parse(content);
+      let raw: unknown;
+      try {
+        raw = JSON.parse(content);
+      } catch (parseError) {
+        console.error("Transform: invalid JSON from OpenAI:", parseError);
+        raw = null;
+      }
+
+      if (raw !== null) {
+        const validated = TransformResponseSchema.safeParse(raw);
+        if (validated.success) {
+          for (const item of validated.data.items) {
+            transformMap.set(item.contentId, {
+              summary: item.summary,
+              keyPoints: item.keyPoints,
+            });
+          }
+        } else {
+          console.error(
+            "Transform: schema validation failed, using original content:",
+            validated.error.message
+          );
+        }
+      }
     }
   } catch (error) {
     console.error("Transform API failed, using original content:", error);
-  }
-
-  const transformMap = new Map<string, { summary: string; keyPoints: string[] }>();
-  if (transformResult?.items) {
-    for (const item of transformResult.items) {
-      transformMap.set(item.contentId, {
-        summary: item.summary,
-        keyPoints: item.keyPoints,
-      });
-    }
   }
 
   return items.map((item) => {
