@@ -43,7 +43,7 @@ export interface NudgetContentItem {
   source: string;
   sourceType: string;
   publishedAt: string;
-  tags: string[];
+  tags?: string[];
 }
 
 export interface NudgetDigestResponse {

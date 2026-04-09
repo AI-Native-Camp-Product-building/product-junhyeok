@@ -156,7 +156,7 @@ function fallbackFilter(items: NudgetContentItem[]): FilterOutcome {
 
   const categories = new Map<string, FeedCategory>();
   const filtered = items.filter((item) => {
-    const text = `${item.title} ${item.summary} ${item.tags.join(" ")}`.toLowerCase();
+    const text = `${item.title} ${item.summary} ${(item.tags ?? []).join(" ")}`.toLowerCase();
     const match = keywords.some((kw) => text.includes(kw));
     if (match) {
       categories.set(item.id, "other");

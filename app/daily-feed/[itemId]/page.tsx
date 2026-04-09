@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { DailyFeedItem, DailyFeedResponse } from "@/lib/daily-feed-types";
-import { mockFeedItems } from "@/lib/mock-feed-data";
+import { getMockFeedItems } from "@/lib/mock-feed-data";
 import { SourceBadge, QuizCard } from "@/components/daily-feed";
 import { safeHref } from "@/lib/sanitize-input";
 
@@ -31,13 +31,13 @@ export default function DailyFeedItemPage({
           if (found) {
             setItem(found);
           } else if (isDev) {
-            setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+            setItem(getMockFeedItems().find((i) => i.id === itemId) ?? null);
           } else {
             setItem(null);
           }
         } else if (isDev) {
           if (cancelled) return;
-          setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+          setItem(getMockFeedItems().find((i) => i.id === itemId) ?? null);
         } else {
           if (cancelled) return;
           setError("콘텐츠를 불러오지 못했습니다.");
@@ -45,7 +45,7 @@ export default function DailyFeedItemPage({
       } catch {
         if (cancelled) return;
         if (isDev) {
-          setItem(mockFeedItems.find((i) => i.id === itemId) ?? null);
+          setItem(getMockFeedItems().find((i) => i.id === itemId) ?? null);
         } else {
           setError("콘텐츠를 불러오지 못했습니다.");
         }

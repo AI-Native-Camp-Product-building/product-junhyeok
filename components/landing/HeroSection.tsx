@@ -1,6 +1,13 @@
 import Link from "next/link";
 
 export function HeroSection() {
+  const todayKst = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+
   return (
     <section className="relative min-h-[80vh] flex items-center">
       {/* Subtle gradient mesh — Camp style, barely visible */}
@@ -91,7 +98,7 @@ export function HeroSection() {
               {/* Results */}
               <div className="space-y-3 pt-1">
                 <div className="text-surface-500 text-xs uppercase tracking-wider">
-                  3 items found · 2026-04-04
+                  3 items found · {todayKst}
                 </div>
 
                 {/* Item 1 */}

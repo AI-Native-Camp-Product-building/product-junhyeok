@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { DailyFeedItem, DailyFeedResponse } from "@/lib/daily-feed-types";
-import { mockFeedItems } from "@/lib/mock-feed-data";
+import { getMockFeedItems } from "@/lib/mock-feed-data";
 import { FeedHeader, FeedCardList, CategoryFilter } from "@/components/daily-feed";
 import type { FilterOption } from "@/components/daily-feed";
 
@@ -11,6 +11,7 @@ export default function DailyFeedPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
+  const [isMock, setIsMock] = useState(false);
 
   useEffect(() => {
     async function loadFeed() {
@@ -21,14 +22,19 @@ export default function DailyFeedPage() {
           const data: DailyFeedResponse = await res.json();
           setItems(data.items);
         } else if (isDev) {
-          // Dev-only fallback to mock data
-          setItems(mockFeedItems);
+          console.warn(
+            `[daily-feed] API returned ${res.status} ${res.statusText}, using mock data`
+          );
+          setItems(getMockFeedItems());
+          setIsMock(true);
         } else {
           setError("피드를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
         }
-      } catch {
+      } catch (err) {
         if (isDev) {
-          setItems(mockFeedItems);
+          console.warn("[daily-feed] API fetch failed, using mock data:", err);
+          setItems(getMockFeedItems());
+          setIsMock(true);
         } else {
           setError("피드를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
         }
@@ -44,7 +50,12 @@ export default function DailyFeedPage() {
       ? items
       : items.filter((item) => item.category === activeFilter);
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
 
   if (loading) {
     return (
@@ -87,6 +98,12 @@ export default function DailyFeedPage() {
 
   return (
     <div className="space-y-6">
+      {isMock && (
+        <div className="inline-flex items-center gap-1.5 border border-error-500/40 bg-error-500/10 text-error-400 px-2.5 py-1 rounded-md font-mono text-xs">
+          <span>&gt;_</span>
+          <span>MOCK MODE · API 실패 폴백</span>
+        </div>
+      )}
       <FeedHeader date={today} itemCount={items.length} />
       <CategoryFilter active={activeFilter} onChange={setActiveFilter} />
       <FeedCardList items={filteredItems} />
