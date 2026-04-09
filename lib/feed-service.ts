@@ -33,10 +33,11 @@ export async function getTodayFeed(): Promise<DailyFeedResponse> {
 
   return loadFeedSingleFlight(today, async () => {
     const built = await buildFeed(today);
-    if (!built.degraded) {
-      setCachedFeed(today, built.response);
-      await writeStoredFeed(today, built.response);
-    }
+    // Cache even when degraded: serving 7 keyword-fallback items for an hour
+    // beats blocking every user on a 286s rebuild. The next cron at 08:00 KST
+    // overwrites with a full-pipeline result.
+    setCachedFeed(today, built.response);
+    await writeStoredFeed(today, built.response);
     return built.response;
   });
 }

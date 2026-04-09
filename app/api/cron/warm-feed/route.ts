@@ -35,30 +35,21 @@ export async function GET(request: Request) {
     const built = await buildFeed(today);
     const elapsedMs = Date.now() - startedAt;
 
-    if (built.degraded) {
-      // Don't cache degraded results — next request should retry full pipeline.
-      return NextResponse.json(
-        {
-          status: "degraded",
-          date: today,
-          totalRaw: built.response.totalRaw,
-          totalFiltered: built.response.totalFiltered,
-          elapsedMs,
-          note: "Pipeline ran in degraded mode; store not updated.",
-        },
-        { status: 200 }
-      );
-    }
-
+    // Always persist — even degraded fallback results are usable and beat
+    // forcing every visitor through a 286s cold rebuild. The next cron run
+    // overwrites with a full-pipeline result if conditions improve.
     await writeStoredFeed(today, built.response);
     setCachedFeed(today, built.response);
 
     return NextResponse.json({
-      status: "ok",
+      status: built.degraded ? "degraded" : "ok",
       date: today,
       totalRaw: built.response.totalRaw,
       totalFiltered: built.response.totalFiltered,
       elapsedMs,
+      ...(built.degraded && {
+        note: "Pipeline ran in degraded mode (keyword fallback); store updated anyway.",
+      }),
     });
   } catch (error) {
     console.error("[cron/warm-feed] build failed:", error);
