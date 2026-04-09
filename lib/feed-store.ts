@@ -32,13 +32,13 @@ export async function readStoredFeed(
 ): Promise<DailyFeedResponse | null> {
   if (USE_BLOB) {
     try {
-      const { head } = await import("@vercel/blob");
-      const info = await head(blobKey(date));
-      const res = await fetch(info.url, { cache: "no-store" });
-      if (!res.ok) return null;
-      return (await res.json()) as DailyFeedResponse;
+      const { get } = await import("@vercel/blob");
+      const result = await get(blobKey(date), { access: "private" });
+      if (!result || result.statusCode !== 200) return null;
+      const text = await new Response(result.stream).text();
+      return JSON.parse(text) as DailyFeedResponse;
     } catch (err) {
-      // head() throws on 404 — that's a normal miss, not a real error.
+      // 404 / not-found is a normal miss for new dates.
       const msg = err instanceof Error ? err.message : String(err);
       if (!/not.found|404/i.test(msg)) {
         console.error("[feed-store] Blob read failed:", err);
@@ -72,7 +72,7 @@ export async function writeStoredFeed(
     try {
       const { put } = await import("@vercel/blob");
       await put(blobKey(date), JSON.stringify(data), {
-        access: "public",
+        access: "private",
         contentType: "application/json",
         addRandomSuffix: false,
         allowOverwrite: true,

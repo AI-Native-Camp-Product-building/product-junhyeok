@@ -42,7 +42,7 @@ export async function issueApiKey(): Promise<ApiKeyRecord> {
 
   const { put } = await import("@vercel/blob");
   await put(blobPath(key), JSON.stringify(record), {
-    access: "public",
+    access: "private",
     contentType: "application/json",
     addRandomSuffix: false,
     allowOverwrite: false,
