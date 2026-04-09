@@ -40,39 +40,42 @@ export function ApiSection() {
   const exampleResponse = `{
   "date": "2026-04-09",
   "channels": {
-    "total": 11,
+    "total": 13,
     "items": [
       {
-        "id": "sub-claude-code-official",
-        "name": "Claude Code Official",
-        "description": "Anthropic 공식 채널",
-        "active": true
+        "id": "5cf0ff88-5c51-4a2d-ae99-8fd91d7fb08f",
+        "name": "Twitter: @danshipper",
+        "url": "https://x.com/danshipper",
+        "platform": "twitter",
+        "active": true,
+        "itemsCollected": 239,
+        "lastCheckedAt": "2026-04-09T07:05:07.236Z"
       }
-      // ...
+      // ... 12 more channels
     ]
   },
   "insights": {
-    "total": 9,
+    "total": 10,
     "items": [
       {
         "id": "feed-2bce3512",
-        "title": "Claude Code Agent SDK 멀티 에이전트 파이프라인",
+        "title": "Claude Code Agent SDK 멀티 에이전트 패턴",
         "summary": "...",
         "keyPoints": ["...", "...", "..."],
         "category": "workflow",
         "source": {
-          "name": "@danshipper",
+          "name": "Twitter: @danshipper",
           "type": "x",
           "url": "https://x.com/..."
         }
       }
-      // ...
+      // ... 9 more insights
     ]
   },
   "meta": {
     "totalRawItems": 33,
-    "totalFilteredItems": 9,
-    "generatedAt": "2026-04-09T07:42:00.000Z"
+    "totalFilteredItems": 10,
+    "generatedAt": "2026-04-09T10:33:29.000Z"
   }
 }`;
 

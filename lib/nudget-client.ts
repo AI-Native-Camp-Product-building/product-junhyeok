@@ -55,9 +55,20 @@ export interface NudgetDigestResponse {
 
 export interface NudgetSubscription {
   id: string;
+  url: string;
+  rssUrl: string | null;
   name: string;
-  description: string;
-  active: boolean;
+  status: string; // "active" | "inactive" | etc.
+  lastCheckedAt: string;
+  errorMessage: string | null;
+  lookupStrategy: string; // "twitter" | "linkedin" | "selector" | ...
+  createdAt: string;
+  updatedAt: string;
+  contentCount: string; // returned as string by Nudget API
+}
+
+export interface NudgetSubscriptionsResponse {
+  items: NudgetSubscription[];
 }
 
 export interface NudgetSubscriptionContentsResponse {
@@ -92,5 +103,6 @@ export async function getContentItem(
 export async function getSubscriptions(): Promise<
   NudgetSubscription[] | null
 > {
-  return nudgetFetch<NudgetSubscription[]>("/subscriptions");
+  const res = await nudgetFetch<NudgetSubscriptionsResponse>("/subscriptions");
+  return res?.items ?? null;
 }

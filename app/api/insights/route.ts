@@ -10,7 +10,7 @@
 
 import { NextResponse } from "next/server";
 import { getTodayFeed } from "@/lib/feed-service";
-import { getSubscriptions } from "@/lib/nudget-client";
+import { getSubscriptions, type NudgetSubscription } from "@/lib/nudget-client";
 import { validateApiKey } from "@/lib/api-keys";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +19,14 @@ export const maxDuration = 300;
 const CACHE_HEADERS = {
   "Cache-Control": "private, max-age=300",
 } as const;
+
+function derivePlatform(sub: NudgetSubscription): string {
+  if (sub.lookupStrategy === "twitter") return "twitter";
+  if (sub.lookupStrategy === "linkedin") return "linkedin";
+  if (sub.url.includes("youtube.com")) return "youtube";
+  if (sub.rssUrl) return "rss";
+  return "other";
+}
 
 export async function GET(request: Request) {
   const apiKey = request.headers.get("x-api-key");
@@ -47,8 +55,11 @@ export async function GET(request: Request) {
     const channels = (subscriptions ?? []).map((s) => ({
       id: s.id,
       name: s.name,
-      description: s.description,
-      active: s.active,
+      url: s.url,
+      platform: derivePlatform(s),
+      active: s.status === "active",
+      itemsCollected: Number(s.contentCount) || 0,
+      lastCheckedAt: s.lastCheckedAt,
     }));
 
     const insights = feed.items.map((item) => ({
